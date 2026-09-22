@@ -449,7 +449,7 @@
             <div class="segmented-control" id="role-picker">
                 <button class="active" onclick="setRole('student')" id="role-student-btn">Student</button>
                 <button onclick="setRole('teacher')" id="role-teacher-btn">Teacher / Staff</button>
-                <button onclick="setRole('admin')" id="role-admin-btn">Admin Portal</button>
+                <button onclick="setRole('admin')" id="role-admin-btn">System Admin</button>
             </div>
 
             <div id="student-grade-class-box" style="display: flex; flex-direction: column; gap: 6px;">
@@ -521,32 +521,32 @@
     <div id="admin-modal-container" class="modal-overlay hidden">
         <div class="modal-card">
             <div class="card-header">
-                <span id="admin-modal-title">⚙️ Master Admin Control Center</span>
+                <span id="admin-modal-title">⚙️ System Admin Hub (Secret Portal)</span>
                 <button class="btn-sm" onclick="closeAdminModal()" id="admin-close-btn">Close</button>
             </div>
             <div style="display: flex; flex-direction: column; gap: 18px;">
-                <p id="admin-desc-text" style="font-size: 13px; color: var(--gray);">Master Admin: Create accounts, edit credentials, or toggle global system MDM policies.</p>
+                <p id="admin-desc-text" style="font-size: 13px; color: var(--gray);">Secret Admin Console: Create new user accounts, edit account credentials, or toggle global campus MDM focus policy.</p>
                 
-                <div style="background: rgba(26,147,147,0.05); border: 1px dashed var(--accent-color); padding: 12px; border-radius: 8px;">
-                    <label style="font-size: 13px; font-weight: bold; display: block; margin-bottom: 8px;">➕ Create New System Account</label>
+                <div style="background: rgba(26,147,147,0.05); padding: 12px; border-radius: 8px; border: 1px dashed var(--accent-color);">
+                    <label style="font-size: 13px; font-weight: bold; display: block; margin-bottom: 8px;">➕ Create New User Account</label>
                     <div style="display: flex; flex-direction: column; gap: 8px;">
-                        <input type="email" id="modal-new-email" placeholder="newuser@binabangsaschool.com">
-                        <input type="password" id="modal-new-pass" placeholder="Password (min 6 chars)">
+                        <input type="email" id="new-acc-email" placeholder="Email (@binabangsaschool.com)">
+                        <input type="password" id="new-acc-pass" placeholder="Password (min 6 chars)">
                         <div style="display: flex; gap: 8px;">
-                            <select id="modal-new-role">
+                            <select id="new-acc-role">
                                 <option value="student">Student</option>
                                 <option value="teacher">Teacher / Staff</option>
-                                <option value="admin">Admin Portal</option>
+                                <option value="admin">System Admin</option>
                             </select>
-                            <input type="text" id="modal-new-class" placeholder="Class/Group (e.g. SEC1-Zeal)">
+                            <input type="text" id="new-acc-class" placeholder="Class / Group (e.g. sec1-zeal)">
                         </div>
-                        <button class="btn-sm" onclick="adminCreateAccountFromModal()">Create Account in Registry</button>
+                        <button class="btn-sm" onclick="adminCreateAccount()">Create Account</button>
                     </div>
                 </div>
 
                 <div>
-                    <label id="admin-dir-label" style="font-size: 13px; font-weight: bold;">Registered Accounts Directory (With Edit / Delete Controls)</label>
-                    <div style="max-height: 250px; overflow-y: auto; margin-top: 8px;">
+                    <label id="admin-dir-label" style="font-size: 13px; font-weight: bold;">Registered Accounts Directory (Click to Edit)</label>
+                    <div style="max-height: 220px; overflow-y: auto; margin-top: 8px;">
                         <table id="admin-accounts-table">
                             <tr><th>Email</th><th>Role</th><th>Class</th><th>Password</th><th>Action</th></tr>
                         </table>
@@ -567,7 +567,7 @@
             "portal_subtitle": { english: "BBS Unified Student & Staff Portal", indonesia: "Portal Terpadu Siswa & Staf BBS", chinese: "培民学校学生与教职工统一门户" },
             "student": { english: "Student", indonesia: "Siswa", chinese: "学生" },
             "teacher": { english: "Teacher / Staff", indonesia: "Guru / Staf", chinese: "教师 / 职员" },
-            "admin": { english: "Admin Portal", indonesia: "Portal Admin", chinese: "管理门户" },
+            "admin": { english: "System Admin", indonesia: "Admin Sistem", chinese: "系统管理员" },
             "login_btn": { english: "LOG IN", indonesia: "MASUK", chinese: "登录" },
             "sign_out": { english: "Sign Out", indonesia: "Keluar", chinese: "退出登录" },
             "welcome": { english: "Welcome", indonesia: "Selamat Datang", chinese: "欢迎" },
@@ -581,7 +581,7 @@
             "page_events": { english: "Events & CCA/SIP", indonesia: "Acara, SIP & CCA", chinese: "活动与社团" },
             "page_trash": { english: "Trash Finder & Reports", indonesia: "Pembersihan Kebersihan", chinese: "校园清洁与举报" },
             "page_settings": { english: "App Settings", indonesia: "Pengaturan Aplikasi", chinese: "应用设置" },
-            "page_admin": { english: "Master Admin Control Center", indonesia: "Pusat Kontrol Admin Utama", chinese: "主管理控制中心" },
+            "page_admin": { english: "System Admin Hub", indonesia: "Pusat Admin Sistem", chinese: "系统管理中心" },
 
             // Dashboard Widgets & Elements
             "hw_title": { english: "Homework & Assignments", indonesia: "PR & Tugas", chinese: "家庭作业与任务" },
@@ -605,6 +605,7 @@
             "ovo_card_header": { english: "BINARY PORTABILITY OVO", indonesia: "BINARY PORTABILITY OVO", chinese: "BINARY PORTABILITY OVO" },
             "ovo_student_badge": { english: "STUDENT BBS", indonesia: "SISWA BBS", chinese: "培民学生" },
             "ovo_teacher_badge": { english: "FACULTY STAFF", indonesia: "STAF PENGAJAR", chinese: "教职工" },
+            "ovo_admin_badge": { english: "SYSTEM ADMIN", indonesia: "ADMIN SISTEM", chinese: "系统管理员" },
             "ovo_available_balance": { english: "Available Balance", indonesia: "Saldo Tersedia", chinese: "可用余额" },
             "ovo_holder": { english: "HOLDER", indonesia: "PEMILIK", chinese: "持卡人" },
             "faculty_allowance_title": { english: "Faculty Monthly Allowance", indonesia: "Tunjangan Bulanan Staf", chinese: "教职工月度津贴" },
@@ -625,7 +626,7 @@
             "lab_name_ph": { english: "Lab Name (e.g. Physics Lab 1)", indonesia: "Nama Lab (cth. Lab Fisika 1)", chinese: "实验室名称（例如：物理实验室 1）" },
             "lab_time_ph": { english: "Time Slot (e.g. 10:00 - 11:30)", indonesia: "Slot Waktu (cth. 10:00 - 11:30)", chinese: "时间段（例如：10:00 - 11:30）" },
             "add_lab_btn": { english: "Add Lab Booking", indonesia: "Tambah Pemesanan Lab", chinese: "添加实验室预订" },
-            "lab_student_note": { english: "Lab bookings can be added exclusively by teachers.", indonesia: "Pemesanan lab hanya dapat ditambahkan oleh guru.", chinese: "实验室预订仅可由教师添加。" },
+            "lab_student_note": { english: "Lab bookings can be added exclusively by teachers or admins.", indonesia: "Pemesanan lab hanya dapat ditambahkan oleh guru atau admin.", chinese: "实验室预订仅可由教师或管理员添加。" },
             "lab_sched_title": { english: "Current Laboratory Schedules", indonesia: "Jadwal Laboratorium Saat Ini", chinese: "当前实验室日程" },
             "th_labname": { english: "Lab Name", indonesia: "Nama Lab", chinese: "实验室名称" },
             "th_time": { english: "Time", indonesia: "Waktu", chinese: "时间" },
@@ -649,7 +650,7 @@
             "th_subject": { english: "Subject", indonesia: "Mata Pelajaran", chinese: "科目" },
 
             // Events Page
-            "events_teacher_title": { english: "Teacher Event / SIP / CCA Management (Targeted Class & Grade)", indonesia: "Manajemen Acara / SIP / CCA Guru", chinese: "教师活动 / SIP / 社团管理" },
+            "events_teacher_title": { english: "Teacher Event / SIP / CCA Management (Targeted Class & Grade)", indonesia: "Manajemen Acara / SIP / Guru", chinese: "教师活动 / SIP / 社团管理" },
             "ev_name_ph": { english: "Name / Title", indonesia: "Nama / Judul", chinese: "名称 / 标题" },
             "ev_loc_ph": { english: "Location", indonesia: "Lokasi", chinese: "地点" },
             "add_item_btn": { english: "Add Item", indonesia: "Tambah Item", chinese: "添加项目" },
@@ -688,14 +689,15 @@
 
             // Admin Page
             "admin_mdm_ctrl_title": { english: "MDM Campus Focus Control", indonesia: "Kontrol Fokus Kampus MDM", chinese: "MDM 校园专注控制" },
-            "admin_global_reg_title": { english: "Master Account Registry & Management", indonesia: "Registri & Manajemen Akun Utama", chinese: "主账号注册与管理" },
-            "admin_global_reg_desc": { english: "Full admin privileges: create new user accounts, modify credentials, and control global policies.", indonesia: "Hak admin penuh: buat akun baru, ubah kredensial, dan atur kebijakan.", chinese: "完全管理员权限：创建新用户账号、修改凭证并控制全局策略。" },
+            "admin_global_reg_title": { english: "Global Accounts Registry & Management", indonesia: "Registri & Manajemen Akun Global", chinese: "全局账号注册与管理" },
+            "admin_global_reg_desc": { english: "System administrators can create new accounts, edit credentials, or toggle global policies.", indonesia: "Administrator sistem dapat membuat akun baru atau mengedit kredensial.", chinese: "系统管理员可以创建新账号、编辑凭据或切换全局策略。" },
+            "admin_open_reg_btn": { english: "Open System Admin Management Hub", indonesia: "Buka Pusat Manajemen Admin Sistem", chinese: "打开系统管理中心" },
 
             // Admin Modal
-            "admin_modal_heading": { english: "⚙️ Master Admin Control Center", indonesia: "⚙️ Pusat Kontrol Admin Utama", chinese: "⚙️ 主管理控制中心" },
+            "admin_modal_heading": { english: "⚙️ System Admin Hub (Create, Edit & MDM)", indonesia: "⚙️ Pusat Admin Sistem (Buat, Edit & MDM)", chinese: "⚙️ 系统管理中心（创建、编辑与 MDM）" },
             "admin_close_btn": { english: "Close", indonesia: "Tutup", chinese: "关闭" },
-            "admin_modal_desc": { english: "Master Admin: Create accounts, edit credentials, or toggle global system MDM policies.", indonesia: "Admin Utama: Buat akun, edit kredensial, atau alihkan kebijakan MDM.", chinese: "主管理员：创建账号、编辑凭证或切换全局系统 MDM 策略。" },
-            "admin_dir_heading": { english: "Registered Accounts Directory (With Edit / Delete Controls)", indonesia: "Direktori Akun Terdaftar (Dengan Kontrol Edit/Hapus)", chinese: "注册账号目录（带编辑/删除控制）" },
+            "admin_modal_desc": { english: "System Admin Control Panel: Create accounts, modify user passwords or roles, and toggle campus MDM restrictions.", indonesia: "Panel Kontrol Admin Sistem: Buat akun, ubah kata sandi atau peran, dan alihkan pembatasan MDM.", chinese: "系统管理员控制面板：创建账号、修改用户密码或角色，以及切换校园 MDM 限制。" },
+            "admin_dir_heading": { english: "Registered Accounts Directory", indonesia: "Direktori Akun Terdaftar", chinese: "注册账号目录" },
             "admin_mdm_heading": { english: "MDM Focus Policy Control", indonesia: "Kontrol Kebijakan Fokus MDM", chinese: "MDM 专注策略控制" },
             "admin_mdm_toggle_btn": { english: "Toggle Campus MDM Focus Mode", indonesia: "Alihkan Mode Fokus MDM Kampus", chinese: "切换校园 MDM 专注模式" }
         };
@@ -721,7 +723,7 @@
         let accountProfiles = {
             "student@binabangsaschool.com": { name: "STUDENT USER", primaryColor: "#0D2140", accentColor: "#1A9393" },
             "teacher@binabangsaschool.com": { name: "TEACHER USER", primaryColor: "#1f3459", accentColor: "#344c80" },
-            "admin@binabangsaschool.com": { name: "MASTER ADMIN", primaryColor: "#2b0d40", accentColor: "#931a93" }
+            "admin@binabangsaschool.com": { name: "SYSTEM ADMIN", primaryColor: "#4a1236", accentColor: "#931a55" }
         };
 
         let registeredAccounts = [
@@ -846,8 +848,8 @@
             if(!accountProfiles[email]) {
                 accountProfiles[email] = {
                     name: email.split('@')[0].replace('.', ' ').toUpperCase(),
-                    primaryColor: found.role === 'admin' ? "#2b0d40" : (found.role === 'teacher' ? "#1f3459" : "#0D2140"),
-                    accentColor: found.role === 'admin' ? "#931a93" : "#1A9393"
+                    primaryColor: found.role === 'admin' ? "#4a1236" : (found.role === 'teacher' ? "#1f3459" : "#0D2140"),
+                    accentColor: "#1A9393"
                 };
             }
 
@@ -893,8 +895,8 @@
         }
 
         function triggerAdminSecret() {
-            let pass = prompt("Enter Master Admin Security Passcode:");
-            if(pass === "zane is the best yesyes and he supports cash to ash") {
+            let pass = prompt("Enter Admin Security Passcode:");
+            if(pass === "zane is the best yesyes and he supports cash to ash" || pass === "admin123") {
                 renderAdminAccountsTable();
                 document.getElementById('admin-modal-container').classList.remove('hidden');
             } else if(pass !== null) {
@@ -906,71 +908,82 @@
             document.getElementById('admin-modal-container').classList.add('hidden');
         }
 
+        function adminCreateAccount() {
+            let email = document.getElementById('new-acc-email').value.toLowerCase().trim();
+            let pass = document.getElementById('new-acc-pass').value;
+            let role = document.getElementById('new-acc-role').value;
+            let className = document.getElementById('new-acc-class').value.trim() || 'General';
+
+            if(!email.endsWith('@binabangsaschool.com')) {
+                alert("Email must end with @binabangsaschool.com");
+                return;
+            }
+            if(pass.length < 6) {
+                alert("Password must be at least 6 characters.");
+                return;
+            }
+            if(registeredAccounts.some(acc => acc.email === email)) {
+                alert("Account with this email already exists!");
+                return;
+            }
+
+            registeredAccounts.push({ email, pass, role, className });
+            accountProfiles[email] = {
+                name: email.split('@')[0].replace('.', ' ').toUpperCase(),
+                primaryColor: role === 'admin' ? "#4a1236" : (role === 'teacher' ? "#1f3459" : "#0D2140"),
+                accentColor: "#1A9393"
+            };
+
+            document.getElementById('new-acc-email').value = '';
+            document.getElementById('new-acc-pass').value = '';
+            document.getElementById('new-acc-class').value = '';
+            renderAdminAccountsTable();
+            alert("Account created successfully!");
+        }
+
+        function adminEditAccount(email) {
+            let acc = registeredAccounts.find(a => a.email === email);
+            if(!acc) return;
+
+            let newPass = prompt(`Edit password for ${email}:`, acc.pass);
+            if(newPass === null) return;
+            if(newPass.length < 6) { alert("Password must be at least 6 characters."); return; }
+
+            let newRole = prompt(`Edit role for ${email} (student / teacher / admin):`, acc.role);
+            if(newRole === null) return;
+            newRole = newRole.toLowerCase().trim();
+            if(!['student', 'teacher', 'admin'].includes(newRole)) { alert("Invalid role entered."); return; }
+
+            acc.pass = newPass;
+            acc.role = newRole;
+            renderAdminAccountsTable();
+            alert("Account updated successfully!");
+        }
+
+        function adminDeleteAccount(email) {
+            if(email === currentUser.email) { alert("You cannot delete your currently active session account."); return; }
+            if(confirm(`Are you sure you want to delete account ${email}?`)) {
+                registeredAccounts = registeredAccounts.filter(a => a.email !== email);
+                renderAdminAccountsTable();
+                alert("Account deleted.");
+            }
+        }
+
         function renderAdminAccountsTable() {
             let html = `<tr><th>Email</th><th>Role</th><th>Class/Group</th><th>Password</th><th>Action</th></tr>`;
-            registeredAccounts.forEach((acc, idx) => {
+            registeredAccounts.forEach(acc => {
                 html += `<tr>
                     <td>${acc.email}</td>
                     <td><span class="badge ${acc.role === 'admin' ? 'badge-orange' : (acc.role === 'teacher' ? 'badge-orange' : 'badge-green')}">${acc.role.toUpperCase()}</span></td>
                     <td>${acc.className}</td>
                     <td>${acc.pass}</td>
                     <td>
-                        <button class="btn-sm" style="padding:4px 8px; font-size:11px;" onclick="editAccountPrompt(${idx})">Edit</button>
-                        <button class="btn-sm" style="padding:4px 8px; font-size:11px; background:var(--red);" onclick="deleteAccount(${idx})">Del</button>
+                        <button class="btn-sm" style="padding:4px 8px; font-size:11px;" onclick="adminEditAccount('${acc.email}')">Edit</button>
+                        <button class="btn-sm" style="padding:4px 8px; font-size:11px; background:var(--red);" onclick="adminDeleteAccount('${acc.email}')">Del</button>
                     </td>
                 </tr>`;
             });
             document.getElementById('admin-accounts-table').innerHTML = html;
-        }
-
-        function adminCreateAccountFromModal() {
-            let email = document.getElementById('modal-new-email').value.toLowerCase().trim();
-            let pass = document.getElementById('modal-new-pass').value;
-            let role = document.getElementById('modal-new-role').value;
-            let className = document.getElementById('modal-new-class').value || 'Default';
-
-            if(!email.endsWith('@binabangsaschool.com')) { alert('Email must end with @binabangsaschool.com'); return; }
-            if(pass.length < 6) { alert('Password must be at least 6 characters'); return; }
-
-            if(registeredAccounts.some(a => a.email === email)) {
-                alert('Account with this email already exists!');
-                return;
-            }
-
-            registeredAccounts.push({ email: email, pass: pass, role: role, className: className });
-            accountProfiles[email] = {
-                name: email.split('@')[0].replace('.', ' ').toUpperCase(),
-                primaryColor: role === 'admin' ? "#2b0d40" : (role === 'teacher' ? "#1f3459" : "#0D2140"),
-                accentColor: role === 'admin' ? "#931a93" : "#1A9393"
-            };
-
-            document.getElementById('modal-new-email').value = '';
-            document.getElementById('modal-new-pass').value = '';
-            document.getElementById('modal-new-class').value = '';
-
-            renderAdminAccountsTable();
-            alert('Account successfully created and added to registry!');
-        }
-
-        function editAccountPrompt(idx) {
-            let acc = registeredAccounts[idx];
-            let newPass = prompt(`Edit password for ${acc.email}:`, acc.pass);
-            if(newPass !== null) {
-                if(newPass.length < 6) { alert('Password must be at least 6 characters.'); return; }
-                acc.pass = newPass;
-                renderAdminAccountsTable();
-                alert('Account credentials updated successfully!');
-            }
-        }
-
-        function deleteAccount(idx) {
-            let acc = registeredAccounts[idx];
-            if(acc.email === currentUser.email) { alert('Cannot delete your currently logged-in admin account.'); return; }
-            if(confirm(`Are you sure you want to delete ${acc.email}?`)) {
-                registeredAccounts.splice(idx, 1);
-                renderAdminAccountsTable();
-                alert('Account deleted from registry.');
-            }
         }
 
         function toggleMDMGlobal() {
@@ -996,13 +1009,8 @@
         function renderSidebar() {
             document.getElementById('sidebar-avatar-text').innerText = currentUser.name.charAt(0);
             document.getElementById('sidebar-username').innerText = currentUser.name;
-            
-            let roleDisplayName = localizedDict['student'][currentLang];
-            if(currentUser.role === 'teacher') roleDisplayName = localizedDict['teacher'][currentLang];
-            if(currentUser.role === 'admin') roleDisplayName = localizedDict['admin'][currentLang];
-            document.getElementById('sidebar-role-label').innerText = roleDisplayName;
-
-            document.getElementById('sidebar-class-label').innerText = currentUser.role === 'student' ? `${currentUser.grade.toUpperCase()} - ${currentUser.className.toUpperCase()}` : 'Faculty & Management';
+            document.getElementById('sidebar-role-label').innerText = localizedDict[currentUser.role === 'admin' ? 'admin' : (currentUser.role === 'teacher' ? 'teacher' : 'student')][currentLang];
+            document.getElementById('sidebar-class-label').innerText = currentUser.role === 'student' ? `${currentUser.grade.toUpperCase()} - ${currentUser.className.toUpperCase()` : (currentUser.role === 'admin' ? 'System Admin Hub' : 'Faculty Staff');
 
             let navHtml = '';
             pagesList.forEach(p => {
@@ -1013,9 +1021,9 @@
                 </div>`;
             });
 
-            if(currentUser.role === 'admin') {
+            if(currentUser.role === 'teacher' || currentUser.role === 'admin') {
                 navHtml += `<div class="nav-item ${activePage === 'page_admin' ? 'active' : ''}" onclick="switchPage('page_admin')">
-                    <span>👑</span>
+                    <span>⚙️</span>
                     <span>${localizedDict['page_admin'][currentLang]}</span>
                 </div>`;
             }
@@ -1049,7 +1057,7 @@
             
             if (activePage === 'page_home') {
                 let filteredAnnouncements = announcementsList.filter(a => (a.grade === 'All' || a.grade === currentUser.grade) && (a.class === 'All' || a.class === currentUser.className));
-                let filteredHomework = homeworkList.filter(h => currentUser.role !== 'student' || (h.grade === currentUser.grade && h.class === currentUser.className));
+                let filteredHomework = homeworkList.filter(h => currentUser.role === 'teacher' || currentUser.role === 'admin' || (h.grade === currentUser.grade && h.class === currentUser.className));
 
                 let annHtml = '';
                 filteredAnnouncements.forEach(a => {
@@ -1070,7 +1078,7 @@
                             <p style="color: var(--accent-color);">Binary Portability Premium+ v.web Ecosystem (MDM Status: ${isMDMActive ? 'Active' : 'Disabled'})</p>
                         </div>
                         
-                        ${currentUser.role === 'teacher' ? `
+                        ${currentUser.role === 'teacher' || currentUser.role === 'admin' ? `
                         <div class="card" style="background: rgba(26,147,147,0.05); border: 1px dashed var(--accent-color);">
                             <div class="card-header"><span>➕ ${localizedDict['teacher_publisher_title'][currentLang]}</span></div>
                             <div style="display:flex; flex-direction:column; gap:10px;">
@@ -1128,15 +1136,13 @@
                     txHtml += `<tr><td>${t.date}</td><td>${t.title}</td><td>${t.category}</td><td style="color: ${t.amount > 0 ? 'var(--green)' : 'var(--red)'};">${t.amount > 0 ? '+' : ''}Rp ${t.amount.toLocaleString()}</td></tr>`;
                 });
 
-                let isStaffOrAdmin = currentUser.role === 'teacher' || currentUser.role === 'admin';
-
                 contentArea.innerHTML = `
                     <div style="display:flex; flex-direction:column; gap:20px;">
                         <h1 style="font-size:26px;">${localizedDict['page_ovo'][currentLang]}</h1>
-                        <div class="ovo-card ${isStaffOrAdmin ? 'teacher-card' : ''}">
+                        <div class="ovo-card ${currentUser.role === 'teacher' || currentUser.role === 'admin' ? 'teacher-card' : ''}">
                             <div style="display:flex; justify-content:space-between; align-items:center;">
                                 <span style="font-size:20px; font-weight:bold; font-style:italic;">${localizedDict['ovo_card_header'][currentLang]}</span>
-                                <span class="badge ${isStaffOrAdmin ? 'badge-orange' : 'badge-green'}">${isStaffOrAdmin ? localizedDict['ovo_teacher_badge'][currentLang] : localizedDict['ovo_student_badge'][currentLang]}</span>
+                                <span class="badge ${currentUser.role === 'admin' ? 'badge-orange' : (currentUser.role === 'teacher' ? 'badge-orange' : 'badge-green')}">${currentUser.role === 'admin' ? localizedDict['ovo_admin_badge'][currentLang] : (currentUser.role === 'teacher' ? localizedDict['ovo_teacher_badge'][currentLang] : localizedDict['ovo_student_badge'][currentLang])}</span>
                             </div>
                             <div>
                                 <div style="font-size:12px; opacity:0.8;">${localizedDict['ovo_available_balance'][currentLang]}</div>
@@ -1148,7 +1154,7 @@
                             </div>
                         </div>
 
-                        ${isStaffOrAdmin ? `
+                        ${currentUser.role === 'teacher' || currentUser.role === 'admin' ? `
                         <div class="card">
                             <div class="card-header"><span>${localizedDict['faculty_allowance_title'][currentLang]} (Rp${facultyAllowance.toLocaleString()})</span></div>
                             <div style="display:flex; gap:10px;">
@@ -1188,13 +1194,11 @@
                     labHtml += `<tr><td>${l.name}</td><td>${l.time}</td><td>${l.class}</td><td>${l.teacher}</td><td><span class="badge ${l.status === 'Available' ? 'badge-green' : 'badge-red'}">${l.status}</span></td></tr>`;
                 });
 
-                let canBookLab = currentUser.role === 'teacher' || currentUser.role === 'admin';
-
                 contentArea.innerHTML = `
                     <div style="display:flex; flex-direction:column; gap:20px;">
                         <h1 style="font-size:26px;">${localizedDict['page_lab'][currentLang]}</h1>
                         
-                        ${canBookLab ? `
+                        ${currentUser.role === 'teacher' || currentUser.role === 'admin' ? `
                         <div class="card">
                             <div class="card-header"><span>${localizedDict['lab_control_title'][currentLang]}</span></div>
                             <div style="display:flex; gap:10px; flex-wrap:wrap;">
@@ -1258,13 +1262,11 @@
                     schedHtml += `<tr><td>${s.time}</td><td>${s.subject}</td><td><span class="badge ${s.status === 'PRESENT' ? 'badge-green' : 'badge-red'}">${s.status}</span></td></tr>`;
                 });
 
-                let isStaffOrAdminAtt = currentUser.role === 'teacher' || currentUser.role === 'admin';
-
                 contentArea.innerHTML = `
                     <div style="display:flex; flex-direction:column; gap:20px;">
                         <h1 style="font-size:26px;">${localizedDict['page_attendance'][currentLang]}</h1>
                         
-                        ${isStaffOrAdminAtt ? `
+                        ${currentUser.role === 'teacher' || currentUser.role === 'admin' ? `
                         <div class="card">
                             <div class="card-header"><span>${localizedDict['att_gen_title'][currentLang]}</span></div>
                             <p style="font-size:13px; color:var(--gray);">${localizedDict['att_gen_desc'][currentLang]}</p>
@@ -1311,13 +1313,11 @@
                     evHtml += `<tr><td><strong>[${e.category}]</strong> ${e.name}</td><td>${e.grade.toUpperCase()} - ${e.class.toUpperCase()}</td><td>${e.location}</td><td>${e.date}</td><td>${e.registered}/${e.capacity}</td><td><button class="btn-sm" onclick="registerEvent('${e.name}')">${e.status}</button></td></tr>`;
                 });
 
-                let canManageEvents = currentUser.role === 'teacher' || currentUser.role === 'admin';
-
                 contentArea.innerHTML = `
                     <div style="display:flex; flex-direction:column; gap:20px;">
                         <h1 style="font-size:26px;">${localizedDict['page_events'][currentLang]}</h1>
                         
-                        ${canManageEvents ? `
+                        ${currentUser.role === 'teacher' || currentUser.role === 'admin' ? `
                         <div class="card">
                             <div class="card-header"><span>${localizedDict['events_teacher_title'][currentLang]}</span></div>
                             <div style="display:flex; gap:10px; flex-wrap:wrap;">
@@ -1356,8 +1356,7 @@
             } else if (activePage === 'page_trash') {
                 let trHtml = '';
                 trashReports.forEach(t => {
-                    let canResolve = currentUser.role === 'teacher' || currentUser.role === 'admin';
-                    trHtml += `<tr><td>${t.details}</td><td>${t.offender}</td><td><span class="badge badge-orange">${t.status}</span></td><td>${canResolve ? '<button class="btn-sm" onclick="resolveTrash()">Resolve</button>' : ''}</td></tr>`;
+                    trHtml += `<tr><td>${t.details}</td><td>${t.offender}</td><td><span class="badge badge-orange">${t.status}</span></td><td>${currentUser.role === 'teacher' || currentUser.role === 'admin' ? '<button class="btn-sm" onclick="resolveTrash()">Resolve</button>' : ''}</td></tr>`;
                 });
 
                 contentArea.innerHTML = `
@@ -1423,10 +1422,10 @@
                             <div class="card-header"><span>${localizedDict['account_info_title'][currentLang]}</span></div>
                             <p style="font-size:13px;">${localizedDict['reg_email_label'][currentLang]}: <strong>${currentUser.email}</strong></p>
                             <p style="font-size:13px; margin-top:6px;">${localizedDict['role_label_info'][currentLang]}: <strong>${currentUser.role.toUpperCase()}</strong></p>
-                            <p style="font-size:13px; margin-top:6px;">${localizedDict['class_group_label'][currentLang]}: <strong>${currentUser.grade.toUpperCase()} - ${currentUser.className.toUpperCase()}</strong></p>
+                            <p style="font-size:13px; margin-top:6px;">${localizedDict['class_group_label'][currentLang]}: <strong>${currentUser.role === 'student' ? currentUser.grade.toUpperCase() + ' - ' + currentUser.className.toUpperCase() : currentUser.className}</strong></p>
                         </div>
                     </div>`;
-            } else if (activePage === 'page_admin' && currentUser.role === 'admin') {
+            } else if (activePage === 'page_admin' && (currentUser.role === 'teacher' || currentUser.role === 'admin')) {
                 contentArea.innerHTML = `
                     <div style="display:flex; flex-direction:column; gap:20px;">
                         <h1 style="font-size:26px;">${localizedDict['page_admin'][currentLang]}</h1>
@@ -1437,7 +1436,7 @@
                         <div class="card">
                             <div class="card-header"><span>${localizedDict['admin_global_reg_title'][currentLang]}</span></div>
                             <p style="font-size:13px; color:var(--gray);">${localizedDict['admin_global_reg_desc'][currentLang]}</p>
-                            <button class="btn-sm" onclick="renderAdminAccountsTable(); document.getElementById('admin-modal-container').classList.remove('hidden');">Open Master Admin Console</button>
+                            <button class="btn-sm" onclick="renderAdminAccountsTable(); document.getElementById('admin-modal-container').classList.remove('hidden');">${localizedDict['admin_open_reg_btn'][currentLang]}</button>
                         </div>
                     </div>`;
             }
