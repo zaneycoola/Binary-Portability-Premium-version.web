@@ -1,0 +1,1496 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Binary Portability Premium+ v.web</title>
+    <style>
+        :root {
+            --primary-color: #0D2140;
+            --accent-color: #1A9393;
+            --bg-color: #f0f2f5;
+            --text-color: #333333;
+            --white: #ffffff;
+            --gray: #666666;
+            --light-gray: #e0e0e0;
+            --red: #d9534f;
+            --green: #5cb85c;
+            --orange: #f0ad4e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        html, body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            width: 100vw;
+            height: 100vh;
+            overflow-x: hidden;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .hidden { display: none !important; }
+        
+        #app {
+            display: flex;
+            width: 100vw;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        #login-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--primary-color), rgba(13, 33, 64, 0.8));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 40px 20px;
+        }
+
+        .login-card {
+            background: rgba(13, 33, 64, 0.95);
+            padding: 36px;
+            border-radius: 20px;
+            width: 480px;
+            max-width: 95vw;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            color: var(--white);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            position: relative;
+            margin: auto;
+        }
+
+        .login-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 12px;
+        }
+
+        .secret-admin-btn {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.15);
+            font-size: 10px;
+            cursor: pointer;
+            padding: 4px;
+            touch-action: manipulation;
+            transition: color 0.2s;
+        }
+        .secret-admin-btn:hover {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .segmented-control {
+            display: flex;
+            background: rgba(255,255,255,0.15);
+            border-radius: 8px;
+            overflow: hidden;
+            padding: 2px;
+        }
+
+        .segmented-control button {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--white);
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background 0.2s;
+            touch-action: manipulation;
+        }
+
+        .segmented-control button.active {
+            background: var(--accent-color);
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            background: var(--white);
+            border-radius: 10px;
+            padding: 12px 16px;
+            gap: 10px;
+        }
+
+        .input-group input, .input-group select {
+            border: none;
+            outline: none;
+            width: 100%;
+            font-size: 15px;
+            background: transparent;
+            color: #333;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-color);
+            color: var(--white);
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+            transition: opacity 0.2s;
+            touch-action: manipulation;
+        }
+
+        .btn-primary:hover { opacity: 0.9; }
+
+        .error-msg {
+            color: var(--red);
+            font-size: 13px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        sidebar {
+            width: 260px;
+            background-color: var(--primary-color);
+            color: var(--white);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            border-right: 1px solid rgba(255,255,255,0.1);
+            position: sticky;
+            top: 0;
+            flex-shrink: 0;
+        }
+
+        .sidebar-header {
+            padding: 20px 20px 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .user-profile-badge {
+            padding: 0 20px 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar-circle {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background-color: rgba(26, 147, 147, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 18px;
+            border: 2px solid var(--accent-color);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .nav-menu {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.2s;
+            touch-action: manipulation;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background-color: var(--accent-color);
+            color: var(--white);
+        }
+
+        .sidebar-footer {
+            padding: 16px 20px;
+            cursor: pointer;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--white);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            touch-action: manipulation;
+        }
+
+        .main-content {
+            flex: 1;
+            min-height: 100vh;
+            background-color: var(--bg-color);
+            padding: 30px 24px;
+            overflow-y: visible;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+            sidebar { width: 75px; }
+            sidebar .sidebar-header span:nth-child(2), 
+            sidebar .user-profile-badge div, 
+            sidebar .nav-item span:nth-child(2), 
+            sidebar .sidebar-footer span:nth-child(2) { display: none; }
+        }
+
+        .card {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--text-color);
+            border-bottom: 1px solid var(--light-gray);
+            padding-bottom: 8px;
+        }
+
+        .classroom-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 16px;
+            margin-top: 10px;
+        }
+
+        .classroom-app-tile {
+            background: var(--white);
+            border: 1px solid var(--light-gray);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            touch-action: manipulation;
+        }
+
+        .classroom-app-tile:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+            border-color: var(--accent-color);
+        }
+
+        .app-icon-box {
+            width: 54px;
+            height: 54px;
+            border-radius: 14px;
+            background: rgba(26, 147, 147, 0.1);
+            color: var(--accent-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+        }
+
+        .ovo-card {
+            background: linear-gradient(135deg, #311236, #180824);
+            border-radius: 16px;
+            padding: 24px;
+            color: var(--white);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            height: 210px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ovo-card.teacher-card {
+            background: linear-gradient(135deg, #1f3459, #344c80);
+        }
+
+        input[type="text"], input[type="password"], input[type="number"], input[type="email"], textarea, select {
+            padding: 10px;
+            border: 1px solid var(--light-gray);
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+            width: 100%;
+            background: var(--white);
+            color: var(--text-color);
+        }
+
+        .btn-sm {
+            padding: 8px 14px;
+            font-size: 13px;
+            font-weight: bold;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            background: var(--accent-color);
+            color: var(--white);
+            transition: opacity 0.2s;
+            touch-action: manipulation;
+        }
+        .btn-sm:hover { opacity: 0.9; }
+
+        .badge {
+            font-size: 10px;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        .badge-green { background: rgba(92, 184, 92, 0.2); color: var(--green); }
+        .badge-red { background: rgba(217, 83, 79, 0.2); color: var(--red); }
+        .badge-orange { background: rgba(240, 173, 78, 0.2); color: var(--orange); }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.6);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 20000;
+            padding: 20px;
+        }
+        .modal-card {
+            background: var(--white);
+            width: 650px;
+            max-width: 95vw;
+            max-height: 90vh;
+            overflow-y: auto;
+            border-radius: 12px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+    </style>
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+</head>
+<body>
+
+    <div id="login-container">
+        <div class="login-card">
+            <button class="secret-admin-btn" onclick="triggerAdminSecret()" title="Admin Portal">⚙</button>
+
+            <div class="login-header">
+                <h2 id="l-portal-title">Binary Portability Premium+ v.web</h2>
+                <p id="l-portal-subtitle" style="font-size: 13px; color: var(--accent-color);">BBS Unified Student & Staff Portal</p>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span>🌐</span>
+                <select id="lang-select" onchange="changeLanguage(this.value)" style="padding: 6px; border-radius: 6px; background: rgba(255,255,255,0.2); color: white; border: none;">
+                    <option value="english">English</option>
+                    <option value="indonesia">Bahasa Indonesia</option>
+                    <option value="chinese">中文</option>
+                </select>
+            </div>
+
+            <div class="segmented-control" id="role-picker">
+                <button class="active" onclick="setRole('student')" id="role-student-btn">Student</button>
+                <button onclick="setRole('teacher')" id="role-teacher-btn">Teacher / Staff</button>
+            </div>
+
+            <div id="student-grade-class-box" style="display: flex; flex-direction: column; gap: 6px;">
+                <label id="l-select-grade-label" style="font-size: 12px; font-weight: bold; opacity: 0.8;">Select Grade & Class</label>
+                <div style="display: flex; gap: 10px;">
+                    <select id="login-grade">
+                        <option value="sec1">SEC1</option>
+                        <option value="sec2">SEC2</option>
+                        <option value="sec3">SEC3</option>
+                        <option value="sec4">SEC4</option>
+                        <option value="jc1">JC1</option>
+                        <option value="jc2">JC2</option>
+                    </select>
+                    <select id="login-class">
+                        <option value="zeal">Zeal</option>
+                        <option value="truth">Truth</option>
+                        <option value="peace">Peace</option>
+                        <option value="grace">Grace</option>
+                        <option value="faith">Faith</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <div class="input-group">
+                    <span>✉️</span>
+                    <input type="email" id="login-email" placeholder="Email (@binabangsaschool.com)" value="student@binabangsaschool.com">
+                </div>
+                <div class="input-group">
+                    <span>🔒</span>
+                    <input type="password" id="login-pass" placeholder="Password (min 6 characters)">
+                </div>
+            </div>
+
+            <div id="login-error" class="error-msg"></div>
+
+            <button class="btn-primary" onclick="handleLogin()" id="l-login-btn">LOG IN</button>
+        </div>
+    </div>
+
+    <div id="app" class="hidden">
+        <sidebar id="sidebar-theme">
+            <div class="sidebar-header">
+                <span id="sb-title">Binary Portability</span>
+            </div>
+
+            <div class="user-profile-badge">
+                <div class="avatar-circle" id="sidebar-avatar-text">S</div>
+                <div style="overflow: hidden;">
+                    <div id="sidebar-username" style="font-size: 14px; font-weight: bold; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">Student User</div>
+                    <div id="sidebar-role-label" style="font-size: 11px; color: var(--accent-color);">Student</div>
+                    <div id="sidebar-class-label" style="font-size: 11px; opacity: 0.8;">SEC1 - Zeal</div>
+                </div>
+            </div>
+
+            <hr style="border-color: rgba(255,255,255,0.1); margin: 0 12px;">
+
+            <div class="nav-menu" id="navigation-list"></div>
+
+            <div class="sidebar-footer" id="logout-btn-trigger">
+                <span>🚪</span>
+                <span id="l-sign-out">Sign Out</span>
+            </div>
+        </sidebar>
+
+        <div class="main-content" id="main-content-area"></div>
+    </div>
+
+    <div id="admin-modal-container" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="card-header">
+                <span id="admin-modal-title">⚙️ Teacher Admin Hub (Account Registry View)</span>
+                <button class="btn-sm" onclick="closeAdminModal()" id="admin-close-btn">Close</button>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 18px;">
+                <p id="admin-desc-text" style="font-size: 13px; color: var(--gray);">As a teacher, you can view all registered portal user accounts below for administrative reference. Note: Teachers cannot create new accounts here.</p>
+                <div>
+                    <label id="admin-dir-label" style="font-size: 13px; font-weight: bold;">Registered Accounts Directory</label>
+                    <div style="max-height: 280px; overflow-y: auto; margin-top: 8px;">
+                        <table id="admin-accounts-table">
+                            <tr><th>Email</th><th>Role</th><th>Class</th><th>Password</th></tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div style="border-top: 1px solid var(--light-gray); padding-top: 12px;">
+                    <label id="admin-mdm-label" style="font-size: 13px; font-weight: bold;">MDM Focus Policy Control</label>
+                    <button class="btn-sm" style="margin-top: 8px; width: 100%;" onclick="toggleMDMGlobal()" id="admin-mdm-btn">Toggle Campus MDM Focus Mode</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const localizedDict = {
+            "portal_title": { english: "Binary Portability Premium+", indonesia: "Binary Portability Premium+", chinese: "Binary Portability Premium+" },
+            "portal_subtitle": { english: "BBS Unified Student & Staff Portal", indonesia: "Portal Terpadu Siswa & Staf BBS", chinese: "培民学校学生与教职工统一门户" },
+            "student": { english: "Student", indonesia: "Siswa", chinese: "学生" },
+            "teacher": { english: "Teacher / Staff", indonesia: "Guru / Staf", chinese: "教师 / 职员" },
+            "login_btn": { english: "LOG IN", indonesia: "MASUK", chinese: "登录" },
+            "sign_out": { english: "Sign Out", indonesia: "Keluar", chinese: "退出登录" },
+            "welcome": { english: "Welcome", indonesia: "Selamat Datang", chinese: "欢迎" },
+            "select_grade_label": { english: "Select Grade & Class", indonesia: "Pilih Tingkat & Kelas", chinese: "选择年级与班级" },
+            
+            "page_home": { english: "Home Dashboard", indonesia: "Dasbor Utama", chinese: "主页" },
+            "page_ovo": { english: "OVO Digital Card", indonesia: "Kartu Digital OVO", chinese: "OVO 数字卡" },
+            "page_lab": { english: "Lab Availability", indonesia: "Ketersediaan Laboratorium", chinese: "实验室状态" },
+            "page_classroom": { english: "Classroom Apps", indonesia: "Aplikasi Kelas", chinese: "课堂应用" },
+            "page_attendance": { english: "QR Attendance & Reports", indonesia: "Absensi QR & Laporan", chinese: "QR 考勤与报告" },
+            "page_events": { english: "Events & CCA/SIP", indonesia: "Acara, SIP & CCA", chinese: "活动与社团" },
+            "page_trash": { english: "Trash Finder & Reports", indonesia: "Pembersihan Kebersihan", chinese: "校园清洁与举报" },
+            "page_settings": { english: "App Settings", indonesia: "Pengaturan Aplikasi", chinese: "应用设置" },
+            "page_admin": { english: "Teacher Admin Hub", indonesia: "Pusat Admin Guru", chinese: "教师管理中心" },
+
+            // Dashboard Widgets & Elements
+            "hw_title": { english: "Homework & Assignments", indonesia: "PR & Tugas", chinese: "家庭作业与任务" },
+            "ovo_balance_title": { english: "OVO Digital Wallet Balance", indonesia: "Saldo Dompet Digital OVO", chinese: "OVO 数字钱包余额" },
+            "open_wallet": { english: "Open Wallet", indonesia: "Buka Dompet", chinese: "打开钱包" },
+            "announcements_title": { english: "Announcements & Alerts", indonesia: "Pengumuman & Pemberitahuan", chinese: "公告与提醒" },
+            "no_homework": { english: "No pending homework assigned.", indonesia: "Tidak ada PR yang tertunda.", chinese: "没有待办作业。" },
+            "no_announcements": { english: "No current announcements for your class.", indonesia: "Tidak ada pengumuman untuk kelas Anda.", chinese: "您的班级当前没有公告。" },
+            
+            // Teacher Publisher
+            "teacher_publisher_title": { english: "Teacher Quick Publisher (Announcements, Events, Homework)", indonesia: "Penerbit Cepat Guru (Pengumuman, Acara, PR)", chinese: "教师快速发布器（公告、活动、作业）" },
+            "pub_type_announcement": { english: "Announcement", indonesia: "Pengumuman", chinese: "公告" },
+            "pub_type_homework": { english: "Homework", indonesia: "PR / Tugas", chinese: "作业" },
+            "pub_all_grades": { english: "All Grades", indonesia: "Semua Tingkat", chinese: "所有年级" },
+            "pub_all_classes": { english: "All Classes", indonesia: "Semua Kelas", chinese: "所有班级" },
+            "pub_title_placeholder": { english: "Title / Subject (e.g. Mathematics)", indonesia: "Judul / Mata Pelajaran (cth. Matematika)", chinese: "标题 / 科目（例如：数学）" },
+            "pub_desc_placeholder": { english: "Details / Task content...", indonesia: "Detail / Konten tugas...", chinese: "详细信息 / 任务内容..." },
+            "pub_btn": { english: "Publish to Class", indonesia: "Publikasikan ke Kelas", chinese: "发布到班级" },
+
+            // OVO Page
+            "ovo_card_header": { english: "BINARY PORTABILITY OVO", indonesia: "BINARY PORTABILITY OVO", chinese: "BINARY PORTABILITY OVO" },
+            "ovo_student_badge": { english: "STUDENT BBS", indonesia: "SISWA BBS", chinese: "培民学生" },
+            "ovo_teacher_badge": { english: "FACULTY STAFF", indonesia: "STAF PENGAJAR", chinese: "教职工" },
+            "ovo_available_balance": { english: "Available Balance", indonesia: "Saldo Tersedia", chinese: "可用余额" },
+            "ovo_holder": { english: "HOLDER", indonesia: "PEMILIK", chinese: "持卡人" },
+            "faculty_allowance_title": { english: "Faculty Monthly Allowance", indonesia: "Tunjangan Bulanan Staf", chinese: "教职工月度津贴" },
+            "recharge_50k": { english: "Recharge Rp 50k", indonesia: "Isi Ulang Rp 50rb", chinese: "充值 5万印尼盾" },
+            "recharge_100k": { english: "Recharge Rp 100k", indonesia: "Isi Ulang Rp 100rb", chinese: "充值 10万印尼盾" },
+            "parent_refill_title": { english: "Parent Wallet Refill Request", indonesia: "Permintaan Pengisian Ulang Dompet Orang Tua", chinese: "家长钱包充值请求" },
+            "send_request": { english: "Send Request", indonesia: "Kirim Permintaan", chinese: "发送请求" },
+            "simulate_payment_title": { english: "Simulate Merchant Payment", indonesia: "Simulasi Pembayaran Merchant", chinese: "模拟商户支付" },
+            "pay_now": { english: "Pay Now", indonesia: "Bayar Sekarang", chinese: "立即支付" },
+            "tx_history_title": { english: "Transaction History Log", indonesia: "Riwayat Transaksi", chinese: "交易历史记录" },
+            "th_date": { english: "Date/Time", indonesia: "Tanggal/Waktu", chinese: "日期/时间" },
+            "th_title": { english: "Title", indonesia: "Judul", chinese: "标题" },
+            "th_category": { english: "Category", indonesia: "Kategori", chinese: "类别" },
+            "th_amount": { english: "Amount", indonesia: "Jumlah", chinese: "金额" },
+
+            // Lab Page
+            "lab_control_title": { english: "Teacher Lab Booking Control", indonesia: "Kontrol Pemesanan Lab Guru", chinese: "教师实验室预订控制" },
+            "lab_name_ph": { english: "Lab Name (e.g. Physics Lab 1)", indonesia: "Nama Lab (cth. Lab Fisika 1)", chinese: "实验室名称（例如：物理实验室 1）" },
+            "lab_time_ph": { english: "Time Slot (e.g. 10:00 - 11:30)", indonesia: "Slot Waktu (cth. 10:00 - 11:30)", chinese: "时间段（例如：10:00 - 11:30）" },
+            "add_lab_btn": { english: "Add Lab Booking", indonesia: "Tambah Pemesanan Lab", chinese: "添加实验室预订" },
+            "lab_student_note": { english: "Lab bookings can be added exclusively by teachers.", indonesia: "Pemesanan lab hanya dapat ditambahkan oleh guru.", chinese: "实验室预订仅可由教师添加。" },
+            "lab_sched_title": { english: "Current Laboratory Schedules", indonesia: "Jadwal Laboratorium Saat Ini", chinese: "当前实验室日程" },
+            "th_labname": { english: "Lab Name", indonesia: "Nama Lab", chinese: "实验室名称" },
+            "th_time": { english: "Time", indonesia: "Waktu", chinese: "时间" },
+            "th_class": { english: "Class", indonesia: "Kelas", chinese: "班级" },
+            "th_teacher": { english: "Teacher", indonesia: "Guru", chinese: "教师" },
+            "th_status": { english: "Status", indonesia: "Status", chinese: "状态" },
+
+            // Classroom Apps Page
+            "classroom_workspace_title": { english: "Binary Portability Student iPad & Cloud Workspace", indonesia: "Ruang Kerja Cloud & iPad Siswa Binary Portability", chinese: "Binary Portability 学生 iPad 与云工作区" },
+            "classroom_workspace_desc": { english: "Access authorized learning tools and productivity apps for classroom engagement.", indonesia: "Akses alat pembelajaran resmi dan aplikasi produktivitas untuk kelas.", chinese: "访问授权的学习工具和生产力应用程序以进行课堂互动。" },
+
+            // Attendance Page
+            "att_gen_title": { english: "Teacher QR Code Generator (Generate Only)", indonesia: "Generator Kode QR Guru (Hanya Pembuatan)", chinese: "教师二维码生成器（仅生成）" },
+            "att_gen_desc": { english: "Generate an official attendance QR code for student scanning.", indonesia: "Hasilkan kode QR absensi resmi untuk dipindai siswa.", chinese: "生成供学生扫描的官方考勤二维码。" },
+            "gen_qr_btn": { english: "Generate QR", indonesia: "Hasilkan QR", chinese: "生成二维码" },
+            "att_scanner_title": { english: "Student Built-in Camera QR Scanner", indonesia: "Pindai QR Kamera Bawaan Siswa", chinese: "学生内置相机二维码扫描仪" },
+            "att_scanner_desc": { english: "Use your built-in device camera to scan the teacher's attendance QR code. Note: Sidebar navigation is locked while the camera is active.", indonesia: "Gunakan kamera perangkat untuk memindai QR guru. Catatan: Navigasi bilah sisi dikunci saat kamera aktif.", chinese: "使用内置设备相机扫描教师的考勤二维码。注意：相机激活时侧边栏导航将被锁定。" },
+            "start_cam_btn": { english: "Start Built-in Camera", indonesia: "Mulai Kamera Bawaan", chinese: "启动内置相机" },
+            "stop_cam_btn": { english: "Stop Camera", indonesia: "Hentikan Kamera", chinese: "停止相机" },
+            "att_sched_title": { english: "Today's Attendance Schedule", indonesia: "Jadwal Absensi Hari Ini", chinese: "今日考勤日程" },
+            "th_subject": { english: "Subject", indonesia: "Mata Pelajaran", chinese: "科目" },
+
+            // Events Page
+            "events_teacher_title": { english: "Teacher Event / SIP / CCA Management (Targeted Class & Grade)", indonesia: "Manajemen Acara / SIP / Guru", chinese: "教师活动 / SIP / 社团管理" },
+            "ev_name_ph": { english: "Name / Title", indonesia: "Nama / Judul", chinese: "名称 / 标题" },
+            "ev_loc_ph": { english: "Location", indonesia: "Lokasi", chinese: "地点" },
+            "add_item_btn": { english: "Add Item", indonesia: "Tambah Item", chinese: "添加项目" },
+            "events_dir_title": { english: "School Events, SIP & CCA Directory", indonesia: "Direktori Acara Sekolah, SIP & CCA", chinese: "学校活动、SIP 与社团目录" },
+            "th_title_cat": { english: "Title & Category", indonesia: "Judul & Kategori", chinese: "标题与类别" },
+            "th_target": { english: "Target", indonesia: "Target", chinese: "目标" },
+            "th_location": { english: "Location", indonesia: "Lokasi", chinese: "地点" },
+            "th_date_col": { english: "Date", indonesia: "Tanggal", chinese: "日期" },
+            "th_capacity": { english: "Capacity", indonesia: "Kapasitas", chinese: "容量" },
+            "th_action": { english: "Action", indonesia: "Tindakan", chinese: "操作" },
+
+            // Trash Page
+            "trash_report_title": { english: "Report Campus Litter / Cleanliness Issue", indonesia: "Laporkan Sampah Kampus / Masalah Kebersihan", chinese: "报告校园垃圾 / 清洁问题" },
+            "trash_input_ph": { english: "Location and issue details", indonesia: "Lokasi dan detail masalah", chinese: "地点和问题详情" },
+            "submit_report_btn": { english: "Submit Report", indonesia: "Kirim Laporan", chinese: "提交报告" },
+            "trash_active_title": { english: "Active Cleanliness Reports", indonesia: "Laporan Kebersihan Aktif", chinese: "有效清洁报告" },
+            "th_details": { english: "Details", indonesia: "Detail", chinese: "详情" },
+            "th_offender": { english: "Offender", indonesia: "Pelanggar", chinese: "违规者" },
+
+            // Settings Page
+            "settings_profile_title": { english: "Per-Account Profile & Username Settings", indonesia: "Pengaturan Profil & Nama Pengguna Per Akun", chinese: "每个账号的个人资料与用户名设置" },
+            "settings_profile_desc": { english: "Settings here apply exclusively to this account profile.", indonesia: "Pengaturan di sini berlaku eksklusif untuk profil akun ini.", chinese: "此处的设置仅适用于此账号个人资料。" },
+            "display_name_label": { english: "Display Name", indonesia: "Nama Tampilan", chinese: "显示名称" },
+            "save_username_btn": { english: "Save Account Username", indonesia: "Simpan Nama Pengguna Akun", chinese: "保存账号用户名" },
+            "settings_theme_title": { english: "Per-Account Theme & Color Customization", indonesia: "Kustomisasi Tema & Warna Per Akun", chinese: "每个账号的主题与颜色自定义" },
+            "primary_color_label": { english: "Primary Sidebar Color", indonesia: "Warna Bilah Sisi Utama", chinese: "主侧边栏颜色" },
+            "accent_color_label": { english: "Accent Highlight Color", indonesia: "Warna Sorot Aksen", chinese: "强调高亮颜色" },
+            "account_info_title": { english: "Account Information", indonesia: "Informasi Akun", chinese: "账号信息" },
+            "reg_email_label": { english: "Registered Email", indonesia: "Email Terdaftar", chinese: "注册邮箱" },
+            "role_label_info": { english: "Role", indonesia: "Peran", chinese: "角色" },
+            "class_group_label": { english: "Class / Group", indonesia: "Kelas / Grup", chinese: "班级 / 组别" },
+
+            // Language Selector inside settings
+            "settings_lang_title": { english: "Language Settings", indonesia: "Pengaturan Bahasa", chinese: "语言设置" },
+            "select_lang_label": { english: "Portal Display Language", indonesia: "Bahasa Tampilan Portal", chinese: "门户显示语言" },
+
+            // Admin Page
+            "admin_mdm_ctrl_title": { english: "MDM Campus Focus Control", indonesia: "Kontrol Fokus Kampus MDM", chinese: "MDM 校园专注控制" },
+            "admin_global_reg_title": { english: "Global Accounts Registry (View Only)", indonesia: "Registri Akun Global (Hanya Lihat)", chinese: "全局账号注册表（仅查看）" },
+            "admin_global_reg_desc": { english: "Teachers can view registered accounts here. Account creation is disabled for teachers.", indonesia: "Guru dapat melihat akun terdaftar di sini.", chinese: "教师可以在此处查看注册账号。" },
+            "admin_open_reg_btn": { english: "Open Account Registry View", indonesia: "Buka Tampilan Registri Akun", chinese: "打开账号注册表视图" },
+
+            // Admin Modal
+            "admin_modal_heading": { english: "⚙️ Teacher Admin Hub (Account Registry View)", indonesia: "⚙️ Pusat Admin Guru (Tampilan Registri Akun)", chinese: "⚙️ 教师管理中心（账号注册表视图）" },
+            "admin_close_btn": { english: "Close", indonesia: "Tutup", chinese: "关闭" },
+            "admin_modal_desc": { english: "As a teacher, you can view all registered portal user accounts below for administrative reference. Note: Teachers cannot create new accounts here.", indonesia: "Sebagai guru, Anda dapat melihat semua akun pengguna portal yang terdaftar di bawah ini.", chinese: "作为教师，您可以在下方查看所有注册的门户用户账号以供行政参考。" },
+            "admin_dir_heading": { english: "Registered Accounts Directory", indonesia: "Direktori Akun Terdaftar", chinese: "注册账号目录" },
+            "admin_mdm_heading": { english: "MDM Focus Policy Control", indonesia: "Kontrol Kebijakan Fokus MDM", chinese: "MDM 专注策略控制" },
+            "admin_mdm_toggle_btn": { english: "Toggle Campus MDM Focus Mode", indonesia: "Alihkan Mode Fokus MDM Kampus", chinese: "切换校园 MDM 专注模式" }
+        };
+
+        let currentLang = 'english';
+        let currentRole = 'student';
+        
+        let currentUser = {
+            email: "student@binabangsaschool.com",
+            name: "STUDENT USER",
+            grade: "sec1",
+            className: "zeal",
+            role: "student",
+            primaryColor: "#0D2140",
+            accentColor: "#1A9393"
+        };
+        
+        let ovoBalance = 125000.0;
+        let facultyAllowance = 500000.0;
+        let activePage = 'page_home';
+        let isMDMActive = true;
+
+        let accountProfiles = {
+            "student@binabangsaschool.com": { name: "STUDENT USER", primaryColor: "#0D2140", accentColor: "#1A9393" },
+            "teacher@binabangsaschool.com": { name: "TEACHER USER", primaryColor: "#1f3459", accentColor: "#344c80" }
+        };
+
+        let registeredAccounts = [
+            { email: "student@binabangsaschool.com", pass: "123456", role: "student", className: "sec1-zeal" },
+            { email: "teacher@binabangsaschool.com", pass: "123456", role: "teacher", className: "Faculty Staff" }
+        ];
+
+        let transactions = [
+            { title: "Cafeteria Lunch", category: "Food", amount: -35000, date: "2026-06-06 12:15", type: "deduct" },
+            { title: "Parent Top-Up", category: "Deposit", amount: 100000, date: "2026-06-05 09:00", type: "add" }
+        ];
+
+        let labBookings = [
+            { name: "Physics Lab 1", time: "08:00 - 09:30", class: "SEC1-Zeal", teacher: "Mr. John", status: "Available" }
+        ];
+
+        let announcementsList = [
+            { title: "Mid-Term Examination Schedule Released", grade: "All", class: "All", content: "Please check your portal schedule for exam rooms.", date: "2026-06-01" }
+        ];
+
+        let homeworkList = [
+            { subject: "Mathematics", grade: "sec1", class: "zeal", task: "Complete Chapter 4 Problem Set", due: "2026-06-10" }
+        ];
+
+        let eventsList = [
+            { name: "BBS Annual Sports Day", category: "Event", grade: "All", class: "All", location: "School Stadium", date: "2026-06-20", capacity: 150, registered: 45, status: "Open" },
+            { name: "Basketball Club (CCA)", category: "CCA", grade: "All", class: "All", location: "Indoor Court", date: "Every Wednesday", capacity: 30, registered: 18, status: "Open" },
+            { name: "Community Service (SIP)", category: "SIP", grade: "All", class: "All", location: "Local Orphanage", date: "2026-06-25", capacity: 50, registered: 32, status: "Open" }
+        ];
+
+        let trashReports = [
+            { details: "Plastic bottles near cafeteria", offender: "-", status: "Pending" }
+        ];
+
+        let scheduleList = [
+            { time: "07:30 - 09:00", subject: "Foundation Mathematics", status: "PRESENT" },
+            { time: "09:15 - 10:45", subject: "General Science", status: "PRESENT" }
+        ];
+
+        let html5QrCodeScanner = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const logoutTrigger = document.getElementById('logout-btn-trigger');
+            if (logoutTrigger) {
+                logoutTrigger.addEventListener('click', () => { handleLogout(); });
+            }
+        });
+
+        function setRole(role) {
+            currentRole = role;
+            document.getElementById('role-student-btn').className = role === 'student' ? 'active' : '';
+            document.getElementById('role-teacher-btn').className = role === 'teacher' ? 'active' : '';
+            document.getElementById('student-grade-class-box').style.display = role === 'student' ? 'flex' : 'none';
+            document.getElementById('login-email').value = role === 'teacher' ? 'teacher@binabangsaschool.com' : 'student@binabangsaschool.com';
+        }
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            
+            // Sync up select elements across UI if present
+            let loginLangSel = document.getElementById('lang-select');
+            if(loginLangSel) loginLangSel.value = lang;
+
+            // Translate static elements outside app
+            document.getElementById('l-portal-title').innerText = localizedDict['portal_title'][lang];
+            document.getElementById('l-portal-subtitle').innerText = localizedDict['portal_subtitle'][lang];
+            document.getElementById('role-student-btn').innerText = localizedDict['student'][lang];
+            document.getElementById('role-teacher-btn').innerText = localizedDict['teacher'][lang];
+            document.getElementById('l-select-grade-label').innerText = localizedDict['select_grade_label'][lang];
+            document.getElementById('l-login-btn').innerText = localizedDict['login_btn'][lang];
+            document.getElementById('l-sign-out').innerText = localizedDict['sign_out'][lang];
+            
+            // Translate admin modal elements
+            document.getElementById('admin-modal-title').innerText = localizedDict['admin_modal_heading'][lang];
+            document.getElementById('admin-close-btn').innerText = localizedDict['admin_close_btn'][lang];
+            document.getElementById('admin-desc-text').innerText = localizedDict['admin_modal_desc'][lang];
+            document.getElementById('admin-dir-label').innerText = localizedDict['admin_dir_heading'][lang];
+            document.getElementById('admin-mdm-label').innerText = localizedDict['admin_mdm_heading'][lang];
+            document.getElementById('admin-mdm-btn').innerText = localizedDict['admin_mdm_toggle_btn'][lang];
+
+            if(!document.getElementById('app').classList.contains('hidden')) {
+                renderSidebar();
+                renderPage();
+            }
+        }
+
+        function handleLogin() {
+            const email = document.getElementById('login-email').value.toLowerCase().trim();
+            const pass = document.getElementById('login-pass').value;
+
+            if(!email.endsWith('@binabangsaschool.com')) {
+                document.getElementById('login-error').innerText = "School email restriction: Must end with @binabangsaschool.com";
+                return;
+            }
+            if(pass.length < 6) {
+                document.getElementById('login-error').innerText = "Password validation error: Minimum 6 characters required.";
+                return;
+            }
+
+            let found = registeredAccounts.find(acc => acc.email === email);
+            if(!found) {
+                document.getElementById('login-error').innerText = "Account not found in registry.";
+                return;
+            }
+            if(found.pass !== pass) {
+                document.getElementById('login-error').innerText = "Incorrect password.";
+                return;
+            }
+
+            document.getElementById('login-error').innerText = "";
+            currentUser.email = email;
+            currentUser.role = found.role;
+            currentUser.className = found.className;
+
+            if(!accountProfiles[email]) {
+                accountProfiles[email] = {
+                    name: email.split('@')[0].replace('.', ' ').toUpperCase(),
+                    primaryColor: found.role === 'teacher' ? "#1f3459" : "#0D2140",
+                    accentColor: "#1A9393"
+                };
+            }
+
+            currentUser.name = accountProfiles[email].name;
+            currentUser.primaryColor = accountProfiles[email].primaryColor;
+            currentUser.accentColor = accountProfiles[email].accentColor;
+
+            if(found.role === 'student') {
+                currentUser.grade = document.getElementById('login-grade').value;
+                currentUser.className = document.getElementById('login-class').value;
+            }
+
+            applyThemeToDOM();
+
+            document.getElementById('login-container').classList.add('hidden');
+            document.getElementById('app').classList.remove('hidden');
+
+            renderSidebar();
+            renderPage();
+        }
+
+        function handleLogout() {
+            stopCameraScannerSafe();
+            document.getElementById('app').classList.add('hidden');
+            document.getElementById('login-container').classList.remove('hidden');
+            document.getElementById('login-pass').value = '';
+        }
+
+        function stopCameraScannerSafe() {
+            if(html5QrCodeScanner) {
+                try {
+                    html5QrCodeScanner.stop().then(() => {
+                        html5QrCodeScanner.clear();
+                        html5QrCodeScanner = null;
+                    }).catch(err => {
+                        html5QrCodeScanner.clear();
+                        html5QrCodeScanner = null;
+                    });
+                } catch(e) {
+                    html5QrCodeScanner = null;
+                }
+            }
+        }
+
+        function triggerAdminSecret() {
+            let pass = prompt("Enter Admin Security Passcode:");
+            if(pass === "zane is the best yesyes and he supports cash to ash") {
+                renderAdminAccountsTable();
+                document.getElementById('admin-modal-container').classList.remove('hidden');
+            } else if(pass !== null) {
+                alert("Incorrect admin passcode.");
+            }
+        }
+
+        function closeAdminModal() {
+            document.getElementById('admin-modal-container').classList.add('hidden');
+        }
+
+        function renderAdminAccountsTable() {
+            let html = `<tr><th>Email</th><th>Role</th><th>Class/Group</th><th>Password</th></tr>`;
+            registeredAccounts.forEach(acc => {
+                html += `<tr>
+                    <td>${acc.email}</td>
+                    <td><span class="badge ${acc.role === 'teacher' ? 'badge-orange' : 'badge-green'}">${acc.role.toUpperCase()}</span></td>
+                    <td>${acc.className}</td>
+                    <td>${acc.pass}</td>
+                </tr>`;
+            });
+            document.getElementById('admin-accounts-table').innerHTML = html;
+        }
+
+        function toggleMDMGlobal() {
+            isMDMActive = !isMDMActive;
+            alert(`Campus MDM Focus Mode is now: ${isMDMActive ? 'ACTIVE' : 'DISABLED'}`);
+            closeAdminModal();
+            if(!document.getElementById('app').classList.contains('hidden')) {
+                renderPage();
+            }
+        }
+
+        const pagesList = [
+            { id: 'page_home', icon: '🏠' },
+            { id: 'page_ovo', icon: '💳' },
+            { id: 'page_lab', icon: '🧪' },
+            { id: 'page_classroom', icon: '📚' },
+            { id: 'page_attendance', icon: '📱' },
+            { id: 'page_events', icon: '📅' },
+            { id: 'page_trash', icon: '🗑️' },
+            { id: 'page_settings', icon: '⚙️' }
+        ];
+
+        function renderSidebar() {
+            document.getElementById('sidebar-avatar-text').innerText = currentUser.name.charAt(0);
+            document.getElementById('sidebar-username').innerText = currentUser.name;
+            document.getElementById('sidebar-role-label').innerText = localizedDict[currentUser.role === 'teacher' ? 'teacher' : 'student'][currentLang];
+            document.getElementById('sidebar-class-label').innerText = currentUser.role === 'student' ? `${currentUser.grade.toUpperCase()} - ${currentUser.className.toUpperCase()}` : 'Faculty Staff';
+
+            let navHtml = '';
+            pagesList.forEach(p => {
+                let activeClass = activePage === p.id ? 'active' : '';
+                navHtml += `<div class="nav-item ${activeClass}" onclick="switchPage('${p.id}')">
+                    <span>${p.icon}</span>
+                    <span>${localizedDict[p.id][currentLang]}</span>
+                </div>`;
+            });
+
+            if(currentUser.role === 'teacher') {
+                navHtml += `<div class="nav-item ${activePage === 'page_admin' ? 'active' : ''}" onclick="switchPage('page_admin')">
+                    <span>👨‍🏫</span>
+                    <span>${localizedDict['page_admin'][currentLang]}</span>
+                </div>`;
+            }
+
+            document.getElementById('navigation-list').innerHTML = navHtml;
+        }
+
+        function switchPage(pageId) {
+            if(html5QrCodeScanner && activePage === 'page_attendance' && pageId !== 'page_attendance') {
+                alert("🔒 Binary Portability Security Lock: Camera scanner is currently active. You must complete or stop the camera scan before navigating to other sections of the app.");
+                return;
+            }
+
+            stopCameraScannerSafe();
+            activePage = pageId;
+            renderSidebar();
+            renderPage();
+        }
+
+        function applyThemeToDOM() {
+            document.documentElement.style.setProperty('--primary-color', currentUser.primaryColor);
+            document.documentElement.style.setProperty('--accent-color', currentUser.accentColor);
+            let sidebarEl = document.getElementById('sidebar-theme');
+            if(sidebarEl) {
+                sidebarEl.style.backgroundColor = currentUser.primaryColor;
+            }
+        }
+
+        function renderPage() {
+            let contentArea = document.getElementById('main-content-area');
+            
+            if (activePage === 'page_home') {
+                let filteredAnnouncements = announcementsList.filter(a => (a.grade === 'All' || a.grade === currentUser.grade) && (a.class === 'All' || a.class === currentUser.className));
+                let filteredHomework = homeworkList.filter(h => currentUser.role === 'teacher' || (h.grade === currentUser.grade && h.class === currentUser.className));
+
+                let annHtml = '';
+                filteredAnnouncements.forEach(a => {
+                    annHtml += `<p style="font-size:13px; margin-bottom:6px;">• <strong>[${a.grade.toUpperCase()} / ${a.class.toUpperCase()}]</strong> ${a.title}: ${a.content}</p>`;
+                });
+                if(!annHtml) annHtml = `<p style="font-size:13px; color:var(--gray);">${localizedDict['no_announcements'][currentLang]}</p>`;
+
+                let hwHtml = '';
+                filteredHomework.forEach(h => {
+                    hwHtml += `<p style="font-size:13px; margin-bottom:6px;">• <strong>[${h.subject}]</strong> ${h.task} (Due: ${h.due})</p>`;
+                });
+                if(!hwHtml) hwHtml = `<p style="font-size:13px; color:var(--gray);">${localizedDict['no_homework'][currentLang]}</p>`;
+
+                contentArea.innerHTML = `
+                    <div style="display:flex; flex-direction:column; gap:20px;">
+                        <div>
+                            <h1 style="font-size:26px;">${localizedDict['welcome'][currentLang]}, ${currentUser.name}!</h1>
+                            <p style="color: var(--accent-color);">Binary Portability Premium+ v.web Ecosystem (MDM Status: ${isMDMActive ? 'Active' : 'Disabled'})</p>
+                        </div>
+                        
+                        ${currentUser.role === 'teacher' ? `
+                        <div class="card" style="background: rgba(26,147,147,0.05); border: 1px dashed var(--accent-color);">
+                            <div class="card-header"><span>➕ ${localizedDict['teacher_publisher_title'][currentLang]}</span></div>
+                            <div style="display:flex; flex-direction:column; gap:10px;">
+                                <div style="display:flex; gap:10px;">
+                                    <select id="pub-type" style="width:140px;">
+                                        <option value="announcement">${localizedDict['pub_type_announcement'][currentLang]}</option>
+                                        <option value="homework">${localizedDict['pub_type_homework'][currentLang]}</option>
+                                    </select>
+                                    <select id="pub-grade" style="width:110px;">
+                                        <option value="All">${localizedDict['pub_all_grades'][currentLang]}</option>
+                                        <option value="sec1">SEC1</option>
+                                        <option value="sec2">SEC2</option>
+                                        <option value="sec3">SEC3</option>
+                                        <option value="sec4">SEC4</option>
+                                        <option value="jc1">JC1</option>
+                                        <option value="jc2">JC2</option>
+                                    </select>
+                                    <select id="pub-class" style="width:110px;">
+                                        <option value="All">${localizedDict['pub_all_classes'][currentLang]}</option>
+                                        <option value="zeal">Zeal</option>
+                                        <option value="truth">Truth</option>
+                                        <option value="peace">Peace</option>
+                                        <option value="grace">Grace</option>
+                                        <option value="faith">Faith</option>
+                                    </select>
+                                </div>
+                                <input type="text" id="pub-title" placeholder="${localizedDict['pub_title_placeholder'][currentLang]}">
+                                <textarea id="pub-desc" placeholder="${localizedDict['pub_desc_placeholder'][currentLang]}" rows="2"></textarea>
+                                <button class="btn-sm" onclick="teacherPublishItem()">${localizedDict['pub_btn'][currentLang]}</button>
+                            </div>
+                        </div>` : ''}
+
+                        <div class="dashboard-grid">
+                            <div style="display:flex; flex-direction:column; gap:16px;">
+                                <div class="card">
+                                    <div class="card-header"><span>📚 ${localizedDict['hw_title'][currentLang]}</span></div>
+                                    ${hwHtml}
+                                </div>
+                                <div class="card">
+                                    <div class="card-header"><span>💳 ${localizedDict['ovo_balance_title'][currentLang]}</span><button class="btn-sm" onclick="switchPage('page_ovo')">${localizedDict['open_wallet'][currentLang]}</button></div>
+                                    <div style="font-size:24px; font-weight:bold; color:var(--accent-color);">Rp ${ovoBalance.toLocaleString()}</div>
+                                </div>
+                            </div>
+                            <div style="display:flex; flex-direction:column; gap:16px;">
+                                <div class="card">
+                                    <div class="card-header"><span>📢 ${localizedDict['announcements_title'][currentLang]}</span></div>
+                                    ${annHtml}
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+            } else if (activePage === 'page_ovo') {
+                let txHtml = '';
+                transactions.forEach(t => {
+                    txHtml += `<tr><td>${t.date}</td><td>${t.title}</td><td>${t.category}</td><td style="color: ${t.amount > 0 ? 'var(--green)' : 'var(--red)'};">${t.amount > 0 ? '+' : ''}Rp ${t.amount.toLocaleString()}</td></tr>`;
+                });
+
+                contentArea.innerHTML = `
+                    <div style="display:flex; flex-direction:column; gap:20px;">
+                        <h1 style="font-size:26px;">${localizedDict['page_ovo'][currentLang]}</h1>
+                        <div class="ovo-card ${currentUser.role === 'teacher' ? 'teacher-card' : ''}">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <span style="font-size:20px; font-weight:bold; font-style:italic;">${localizedDict['ovo_card_header'][currentLang]}</span>
+                                <span class="badge ${currentUser.role === 'teacher' ? 'badge-orange' : 'badge-green'}">${currentUser.role === 'teacher' ? localizedDict['ovo_teacher_badge'][currentLang] : localizedDict['ovo_student_badge'][currentLang]}</span>
+                            </div>
+                            <div>
+                                <div style="font-size:12px; opacity:0.8;">${localizedDict['ovo_available_balance'][currentLang]}</div>
+                                <div style="font-size:32px; font-weight:bold;">Rp ${ovoBalance.toLocaleString()}</div>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; font-size:12px; opacity:0.8;">
+                                <div>${localizedDict['ovo_holder'][currentLang]}: <strong>${currentUser.name}</strong></div>
+                                <div>ID: <strong>BBS-2026-REG</strong></div>
+                            </div>
+                        </div>
+
+                        ${currentUser.role === 'teacher' ? `
+                        <div class="card">
+                            <div class="card-header"><span>${localizedDict['faculty_allowance_title'][currentLang]} (Rp${facultyAllowance.toLocaleString()})</span></div>
+                            <div style="display:flex; gap:10px;">
+                                <button class="btn-sm" onclick="rechargeFaculty(50000)">${localizedDict['recharge_50k'][currentLang]}</button>
+                                <button class="btn-sm" onclick="rechargeFaculty(100000)">${localizedDict['recharge_100k'][currentLang]}</button>
+                            </div>
+                        </div>` : `
+                        <div class="card">
+                            <div class="card-header"><span>${localizedDict['parent_refill_title'][currentLang]}</span></div>
+                            <div style="display:flex; gap:10px;">
+                                <input type="email" id="parent-email" placeholder="parent@domain.com" value="parent@binabangsaschool.com">
+                                <input type="number" id="refill-amt" placeholder="Amount Rp">
+                                <button class="btn-sm" onclick="sendRefillRequest()">${localizedDict['send_request'][currentLang]}</button>
+                            </div>
+                        </div>`}
+
+                        <div class="card">
+                            <div class="card-header"><span>${localizedDict['simulate_payment_title'][currentLang]}</span></div>
+                            <div style="display:flex; gap:10px;">
+                                <input type="text" id="merchant-name" placeholder="Item / Store Name">
+                                <input type="number" id="merchant-amt" placeholder="Amount Rp">
+                                <button class="btn-sm" onclick="payMerchant()">${localizedDict['pay_now'][currentLang]}</button>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header"><span>${localizedDict['tx_history_title'][currentLang]}</span></div>
+                            <table>
+                                <tr><th>${localizedDict['th_date'][currentLang]}</th><th>${localizedDict['th_title'][currentLang]}</th><th>${localizedDict['th_category'][currentLang]}</th><th>${localizedDict['th_amount'][currentLang]}</th></tr>
+                                ${txHtml}
+                            </table>
+                        </div>
+                    </div>`;
+            } else if (activePage === 'page_lab') {
+                let labHtml = '';
+                labBookings.forEach(l => {
+                    labHtml += `<tr><td>${l.name}</td><td>${l.time}</td><td>${l.class}</td><td>${l.teacher}</td><td><span class="badge ${l.status === 'Available' ? 'badge-green' : 'badge-red'}">${l.status}</span></td></tr>`;
+                });
+
+                contentArea.innerHTML = `
+                    <div style="display:flex; flex-direction:column; gap:20px;">
+                        <h1 style="font-size:26px;">${localizedDict['page_lab'][currentLang]}</h1>
+                        
+                        ${currentUser.role === 'teacher' ? `
+                        <div class="card">
+                            <div class="card-header"><span>${localizedDict['lab_control_title'][currentLang]}</span></div>
+                            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                                <input type="text" id="lab-name" placeholder="${localizedDict['lab_name_ph'][currentLang]}" style="flex:1;">
+                                <input type="text" id="lab-time" placeholder="${localizedDict['lab_time_ph'][currentLang]}" style="flex:1;">
+                                <button class="btn-sm" onclick="bookLabSlot()">${localizedDict['add_lab_btn'][currentLang]}</button>
+                            </div>
+                        </div>` : `<div class="card"><p style="font-size:13px; color:var(--gray);">${localizedDict['lab_student_note'][currentLang]}</p></div>`}
+
+                        <div class="card">
+                            <div class="card-header"><span>${localizedDict['lab_sched_title'][currentLang]}</span></div>
+                            <table>
+                                <tr><th>${localizedDict['th_labname'][currentLang]}</th><th>${localizedDict['th_time'][currentLang]}</th><th>${localizedDict['th_class'][currentLang]}</th><th>${localizedDict['th_teacher'][currentLang]}</th><th>${localizedDict['th_status'][currentLang]}</th></tr>
+                                ${labHtml}
+                            </table>
+                        </div>
+                    </div>`;
+            } else if (activePage === 'page_classroom') {
+                contentArea.innerHTML = `
+                    <div style="display:flex; flex-direction:column; gap:20px;">
+                        <h1 style="font-size:26px;">${localizedDict['page_classroom'][currentLang]}</h1>
+                        <div class="card">
+                            <div class="card-header"><span>${localizedDict['classroom_workspace_title'][currentLang]}</span></div>
+                            <p style="font-size:13px; color:var(--gray);">${localizedDict['classroom_workspace_desc'][currentLang]}</p>
+                            
+                            <div class="classroom-grid">
+                                <div class="classroom-app-tile" onclick="window.open('https://www.apple.com/keynote/', '_blank')">
+                                    <div class="app-icon-box">📊</div>
+                                    <div style="font-weight:bold; font-size:14px;">Keynote</div>
+                                </div>
+                                <div class="classroom-app-tile" onclick="window.open('https://www.apple.com/pages/', '_blank')">
+                                    <div class="app-icon-box">📝</div>
+                                    <div style="font-weight:bold; font-size:14px;">Pages</div>
+                                </div>
+                                <div class="classroom-app-tile" onclick="window.open('https://www.icloud.com/notes', '_blank')">
+                                    <div class="app-icon-box">📒</div>
+                                    <div style="font-weight:bold; font-size:14px;">Notes</div>
+                                </div>
+                                <div class="classroom-app-tile" onclick="window.open('https://www.icloud.com', '_blank')">
+                                    <div class="app-icon-box">📁</div>
+                                    <div style="font-weight:bold; font-size:14px;">Files</div>
+                                </div>
+                                <div class="classroom-app-tile" onclick="window.open('https://app.classkick.com', '_blank')">
+                                    <div class="app-icon-box">💡</div>
+                                    <div style="font-weight:bold; font-size:14px;">Classkick</div>
+                                </div>
+                                <div class="classroom-app-tile" onclick="window.open('https://kahoot.com', '_blank')">
+                                    <div class="app-icon-box">🎮</div>
+                                    <div style="font-weight:bold; font-size:14px;">Kahoot</div>
+                                </div>
+                                <div class="classroom-app-tile" onclick="window.open('https://wayground.com', '_blank')">
+                                    <div class="app-icon-box">🌐</div>
+                                    <div style="font-weight:bold; font-size:14px;">Wayground</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+            } else if (activePage === 'page_attendance') {
+                let schedHtml = '';
+                scheduleList.forEach(s => {
+                    schedHtml += `<tr><td>${s.time}</td><td>${s.subject}</td><td><span class="badge ${s.status === 'PRESENT' ? 'badge-green' : 'badge-red'}">${s.status}</span></td></tr>`;
+                });
+
+                contentArea.innerHTML = `
+                    <div style="display:flex; flex-direction:column; gap:20px;">
+                        <h1 style="font-size:26px;">${localizedDict['page_attendance'][currentLang]}</h1>
+                        
+                        ${currentUser.role === 'teacher' ? `
+                        <div class="card">
+                            <div class="card-header"><span>${localizedDict['att_gen_title'][currentLang]}</span></div>
+                            <p style="font-size:13px; color:var(--gray);">${localizedDict['att_gen_desc'][currentLang]}</p>
+                            <div style="display:flex; gap:10px; margin-top:8px;">
+                                <select id="qr-gen-grade" style="width:120px;">
+                                    <option value="sec1">SEC1</option>
+                                    <option value="sec2">SEC2</option>
+                                    <option value="sec3">SEC3</option>
+                                    <option value="sec4">SEC4</option>
+                                    <option value="jc1">JC1</option>
+                                </select>
+                                <select id="qr-gen-class" style="width:120px;">
+                                    <option value="zeal">Zeal</option>
+                                    <option value="truth">Truth</option>
+                                    <option value="peace">Peace</option>
+                                    <option value="grace">Grace</option>
+                                    <option value="faith">Faith</option>
+                                </select>
+                                <button class="btn-sm" onclick="generateTeacherQRCode()">${localizedDict['gen_qr_btn'][currentLang]}</button>
+                            </div>
+                            <div id="teacher-qrcode-container" style="display:flex; justify-content:center; margin-top:15px;"></div>
+                        </div>` : `
+                        <div class="card" id="student-scanner-card">
+                            <div class="card-header"><span>${localizedDict['att_scanner_title'][currentLang]}</span></div>
+                            <p style="font-size:13px; color:var(--gray);">${localizedDict['att_scanner_desc'][currentLang]}</p>
+                            <div id="reader" style="width: 100%; max-width: 400px; margin: 10px auto;"></div>
+                            <div style="display:flex; gap:10px; margin-top:10px;">
+                                <button class="btn-sm" style="flex:1;" onclick="startStudentScanner()">${localizedDict['start_cam_btn'][currentLang]}</button>
+                                <button class="btn-sm" style="flex:1; background:var(--red);" onclick="stopStudentScannerManually()">${localizedDict['stop_cam_btn'][currentLang]}</button>
+                            </div>
+                        </div>`}
+
+                        <div class="card">
+                            <div class="card-header"><span>${localizedDict['att_sched_title'][currentLang]}</span></div>
+                            <table>
+                                <tr><th>${localizedDict['th_time'][currentLang]}</th><th>${localizedDict['th_subject'][currentLang]}</th><th>${localizedDict['th_status'][currentLang]}</th></tr>
+                                ${schedHtml}
+                            </table>
+                        </div>
+                    </div>`;
+            } else if (activePage === 'page_events') {
+                let evHtml = '';
+                eventsList.forEach(e => {
+                    evHtml += `<tr><td><strong>[${e.category}]</strong> ${e.name}</td><td>${e.grade.toUpperCase()} - ${e.class.toUpperCase()}</td><td>${e.location}</td><td>${e.date}</td><td>${e.registered}/${e.capacity}</td><td><button class="btn-sm" onclick="registerEvent('${e.name}')">${e.status}</button></td></tr>`;
+                });
+
+                contentArea.innerHTML = `
+                    <div style="display:flex; flex-direction:column; gap:20px;">
+                        <h1 style="font-size:26px;">${localizedDict['page_events'][currentLang]}</h1>
+                        
+                        ${currentUser.role === 'teacher' ? `
+                        <div class="card">
+                            <div class="card-header"><span>${localizedDict['events_teacher_title'][currentLang]}</span></div>
+                            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                                <select id="ev-cat" style="width:110px;">
+                                    <option value="Event">Event</option>
+                                    <option value="SIP">SIP</option>
+                                    <option value="CCA">CCA</option>
+                                </select>
+                                <select id="ev-grade" style="width:100px;">
+                                    <option value="All">${localizedDict['pub_all_grades'][currentLang]}</option>
+                                    <option value="sec1">SEC1</option>
+                                    <option value="sec2">SEC2</option>
+                                    <option value="sec3">SEC3</option>
+                                    <option value="sec4">SEC4</option>
+                                </select>
+                                <select id="ev-class" style="width:100px;">
+                                    <option value="All">${localizedDict['pub_all_classes'][currentLang]}</option>
+                                    <option value="zeal">Zeal</option>
+                                    <option value="truth">Truth</option>
+                                    <option value="peace">Peace</option>
+                                </select>
+                                <input type="text" id="ev-name" placeholder="${localizedDict['ev_name_ph'][currentLang]}" style="flex:1; min-width:140px;">
+                                <input type="text" id="ev-loc" placeholder="${localizedDict['ev_loc_ph'][currentLang]}" style="width:120px;">
+                                <button class="btn-sm" onclick="addNewEvent()">${localizedDict['add_item_btn'][currentLang]}</button>
+                            </div>
+                        </div>` : ''}
+
+                        <div class="card">
+                            <div class="card-header"><span>${localizedDict['events_dir_title'][currentLang]}</span></div>
+                            <table>
+                                <tr><th>${localizedDict['th_title_cat'][currentLang]}</th><th>${localizedDict['th_target'][currentLang]}</th><th>${localizedDict['th_location'][currentLang]}</th><th>${localizedDict['th_date_col'][currentLang]}</th><th>${localizedDict['th_capacity'][currentLang]}</th><th>${localizedDict['th_action'][currentLang]}</th></tr>
+                                ${evHtml}
+                            </table>
+                        </div>
+                    </div>`;
+            } else if (activePage === 'page_trash') {
+                let trHtml = '';
+                trashReports.forEach(t => {
+                    trHtml += `<tr><td>${t.details}</td><td>${t.offender}</td><td><span class="badge badge-orange">${t.status}</span></td><td>${currentUser.role === 'teacher' ? '<button class="btn-sm" onclick="resolveTrash()">Resolve</button>' : ''}</td></tr>`;
+                });
+
+                contentArea.innerHTML = `
+                    <div style="display:flex; flex-direction:column; gap:20px;">
+                        <h1 style="font-size:26px;">${localizedDict['page_trash'][currentLang]}</h1>
+                        <div class="card">
+                            <div class="card-header"><span>${localizedDict['trash_report_title'][currentLang]}</span></div>
+                            <div style="display:flex; gap:10px;">
+                                <input type="text" id="trash-desc" placeholder="${localizedDict['trash_input_ph'][currentLang]}">
+                                <button class="btn-sm" onclick="submitTrash()">${localizedDict['submit_report_btn'][currentLang]}</button>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header"><span>${localizedDict['trash_active_title'][currentLang]}</span></div>
+                            <table>
+                                <tr><th>${localizedDict['th_details'][currentLang]}</th><th>${localizedDict['th_offender'][currentLang]}</th><th>${localizedDict['th_status'][currentLang]}</th><th>${localizedDict['th_action'][currentLang]}</th></tr>
+                                ${trHtml}
+                            </table>
+                        </div>
+                    </div>`;
+            } else if (activePage === 'page_settings') {
+                contentArea.innerHTML = `
+                    <div style="display:flex; flex-direction:column; gap:20px;">
+                        <h1 style="font-size:26px;">${localizedDict['page_settings'][currentLang]}</h1>
+                        
+                        <div class="card">
+                            <div class="card-header"><span>🌐 ${localizedDict['settings_lang_title'][currentLang]}</span></div>
+                            <p style="font-size:12px; color:var(--gray);">Select your portal display language dynamically.</p>
+                            <div style="display:flex; gap:10px; margin-top:6px;">
+                                <select id="settings-lang-dropdown" onchange="changeLanguage(this.value)" style="max-width:240px;">
+                                    <option value="english" ${currentLang === 'english' ? 'selected' : ''}>English</option>
+                                    <option value="indonesia" ${currentLang === 'indonesia' ? 'selected' : ''}>Bahasa Indonesia</option>
+                                    <option value="chinese" ${currentLang === 'chinese' ? 'selected' : ''}>中文</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header"><span>${localizedDict['settings_profile_title'][currentLang]}</span></div>
+                            <p style="font-size:12px; color:var(--gray);">${localizedDict['settings_profile_desc'][currentLang]} (${currentUser.email}).</p>
+                            <div style="display:flex; flex-direction:column; gap:10px; margin-top:6px;">
+                                <label style="font-size:12px; font-weight:bold;">${localizedDict['display_name_label'][currentLang]}</label>
+                                <input type="text" id="settings-username" value="${currentUser.name}">
+                                <button class="btn-sm" onclick="updateUsernameSetting()">${localizedDict['save_username_btn'][currentLang]}</button>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header"><span>${localizedDict['settings_theme_title'][currentLang]}</span></div>
+                            <div style="display:flex; gap:15px; flex-wrap:wrap;">
+                                <div>
+                                    <label style="font-size:12px; font-weight:bold; display:block; margin-bottom:4px;">${localizedDict['primary_color_label'][currentLang]}</label>
+                                    <input type="color" id="picker-primary" value="${currentUser.primaryColor}" style="width:80px; height:40px; border:none; cursor:pointer;" onchange="updateThemeColors()">
+                                </div>
+                                <div>
+                                    <label style="font-size:12px; font-weight:bold; display:block; margin-bottom:4px;">${localizedDict['accent_color_label'][currentLang]}</label>
+                                    <input type="color" id="picker-accent" value="${currentUser.accentColor}" style="width:80px; height:40px; border:none; cursor:pointer;" onchange="updateThemeColors()">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header"><span>${localizedDict['account_info_title'][currentLang]}</span></div>
+                            <p style="font-size:13px;">${localizedDict['reg_email_label'][currentLang]}: <strong>${currentUser.email}</strong></p>
+                            <p style="font-size:13px; margin-top:6px;">${localizedDict['role_label_info'][currentLang]}: <strong>${currentUser.role.toUpperCase()}</strong></p>
+                            <p style="font-size:13px; margin-top:6px;">${localizedDict['class_group_label'][currentLang]}: <strong>${currentUser.grade.toUpperCase()} - ${currentUser.className.toUpperCase()}</strong></p>
+                        </div>
+                    </div>`;
+            } else if (activePage === 'page_admin' && currentUser.role === 'teacher') {
+                contentArea.innerHTML = `
+                    <div style="display:flex; flex-direction:column; gap:20px;">
+                        <h1 style="font-size:26px;">${localizedDict['page_admin'][currentLang]}</h1>
+                        <div class="card">
+                            <div class="card-header"><span>${localizedDict['admin_mdm_ctrl_title'][currentLang]}</span></div>
+                            <button class="btn-sm" onclick="toggleMDMGlobal()">${localizedDict['admin_mdm_toggle_btn'][currentLang]} (${isMDMActive ? 'Active' : 'Disabled'})</button>
+                        </div>
+                        <div class="card">
+                            <div class="card-header"><span>${localizedDict['admin_global_reg_title'][currentLang]}</span></div>
+                            <p style="font-size:13px; color:var(--gray);">${localizedDict['admin_global_reg_desc'][currentLang]}</p>
+                            <button class="btn-sm" onclick="renderAdminAccountsTable(); document.getElementById('admin-modal-container').classList.remove('hidden');">${localizedDict['admin_open_reg_btn'][currentLang]}</button>
+                        </div>
+                    </div>`;
+            }
+        }
+
+        function teacherPublishItem() {
+            let type = document.getElementById('pub-type').value;
+            let grade = document.getElementById('pub-grade').value;
+            let className = document.getElementById('pub-class').value;
+            let title = document.getElementById('pub-title').value;
+            let desc = document.getElementById('pub-desc').value;
+
+            if(!title || !desc) { alert('Please fill in title and description.'); return; }
+
+            if(type === 'announcement') {
+                announcementsList.unshift({ title: title, grade: grade, class: className, content: desc, date: "2026-06-06" });
+                alert('Announcement successfully published to target class & grade!');
+            } else {
+                homeworkList.unshift({ subject: title, grade: grade, class: className, task: desc, due: "Next Class" });
+                alert('Homework successfully assigned to target class & grade!');
+            }
+            document.getElementById('pub-title').value = '';
+            document.getElementById('pub-desc').value = '';
+            renderPage();
+        }
+
+        function generateTeacherQRCode() {
+            let grade = document.getElementById('qr-gen-grade').value.toUpperCase();
+            let className = document.getElementById('qr-gen-class').value.toUpperCase();
+            let qrText = `BINARY-PORTABILITY-ATTENDANCE-${grade}-${className}-${Date.now()}`;
+            
+            let container = document.getElementById('teacher-qrcode-container');
+            container.innerHTML = '';
+            
+            let img = document.createElement('img');
+            img.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrText)}`;
+            img.alt = "Attendance QR Code";
+            container.appendChild(img);
+            alert(`Attendance QR Code successfully generated for ${grade} - ${className}`);
+        }
+
+        function startStudentScanner() {
+            if(html5QrCodeScanner) return;
+            html5QrCodeScanner = new Html5Qrcode("reader");
+            html5QrCodeScanner.start(
+                { facingMode: "environment" },
+                { fps: 10, qrbox: { width: 250, height: 250 } },
+                (decodedTest, decodedResult) => {
+                    alert(`Attendance Successfully Logged! Verified QR: ${decodedTest}`);
+                    stopCameraScannerSafe();
+                },
+                (errorMessage) => {
+                    // Scanning active framing
+                }
+            ).catch(err => {
+                alert(`Camera access error or unsupported browser: ${err}`);
+                html5QrCodeScanner = null;
+            });
+        }
+
+        function stopStudentScannerManually() {
+            stopCameraScannerSafe();
+            alert("Camera scanner stopped. Sidebar navigation is now unlocked.");
+        }
+
+        function updateUsernameSetting() {
+            let newName = document.getElementById('settings-username').value.trim();
+            if(!newName) { alert('Name cannot be empty'); return; }
+            currentUser.name = newName.toUpperCase();
+            if(accountProfiles[currentUser.email]) {
+                accountProfiles[currentUser.email].name = currentUser.name;
+            }
+            renderSidebar();
+            alert('Per-account username updated successfully!');
+        }
+
+        function updateThemeColors() {
+            currentUser.primaryColor = document.getElementById('picker-primary').value;
+            currentUser.accentColor = document.getElementById('picker-accent').value;
+            
+            if(accountProfiles[currentUser.email]) {
+                accountProfiles[currentUser.email].primaryColor = currentUser.primaryColor;
+                accountProfiles[currentUser.email].accentColor = currentUser.accentColor;
+            }
+
+            applyThemeToDOM();
+        }
+
+        function payMerchant() {
+            let amt = parseFloat(document.getElementById('merchant-amt').value);
+            let name = document.getElementById('merchant-name').value;
+            if(isNaN(amt) || amt <= 0 || !name) { alert('Please enter valid merchant details'); return; }
+            if(ovoBalance < amt) { alert('Insufficient wallet balance'); return; }
+            ovoBalance -= amt;
+            transactions.unshift({ title: name, category: "Purchase", amount: -amt, date: "2026-06-06 20:00", type: "dedurct" });
+            alert(`Payment of Rp ${amt.toLocaleString()} successful!`);
+            renderPage();
+        }
+
+        function rechargeFaculty(amt) {
+            facultyAllowance += amt;
+            ovoBalance += amt;
+            transactions.unshift({ title: "Faculty Allowance Recharge", category: "Allowance", amount: amt, date: "2026-06-06 20:00", type: "add" });
+            alert(`Successfully recharged Rp ${amt.toLocaleString()}`);
+            renderPage();
+        }
+
+        function sendRefillRequest() {
+            alert('Parent notification refill request sent successfully!');
+        }
+
+        function bookLabSlot() {
+            let name = document.getElementById('lab-name').value;
+            let time = document.getElementById('lab-time').value;
+            if(!name || !time) { alert('Fill all fields'); return; }
+            labBookings.push({ name: name, time: time, class: `${currentUser.grade.toUpperCase()}-${currentUser.className.toUpperCase()}`, teacher: currentUser.name, status: "Available" });
+            alert('Laboratory slot added successfully!');
+            renderPage();
+        }
+
+        function addNewEvent() {
+            let cat = document.getElementById('ev-cat').value;
+            let grade = document.getElementById('ev-grade').value;
+            let className = document.getElementById('ev-class').value;
+            let name = document.getElementById('ev-name').value;
+            let loc = document.getElementById('ev-loc').value;
+            if(!name || !loc) { alert('Fill all event fields'); return; }
+            eventsList.push({ name: name, category: cat, grade: grade, class: className, location: loc, date: "2026-06-30", capacity: 40, registered: 0, status: "Open" });
+            alert(`${cat} successfully created and published to target class & grade!`);
+            renderPage();
+        }
+
+        function registerEvent(eventName) {
+            alert(`Successfully registered for ${eventName}`);
+        }
+
+        function submitTrash() {
+            let desc = document.getElementById('trash-desc').value;
+            if(!desc) { alert('Enter cleanliness report details'); return; }
+            trashReports.push({ details: desc, offender: "-", status: "Pending" });
+            alert('Trash report submitted successfully.');
+            renderPage();
+        }
+
+        function resolveTrash() {
+            alert('Cleanliness report marked as Resolved / Cleaned.');
+        }
+    </script>
+</body>
+</html>
