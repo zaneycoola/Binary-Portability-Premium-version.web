@@ -382,6 +382,10 @@
         }
         .btn-sm:hover { opacity: 0.9; }
 
+        .btn-danger {
+            background: var(--red);
+        }
+
         .badge {
             font-size: 10px;
             font-weight: bold;
@@ -527,7 +531,6 @@
             <div style="display: flex; flex-direction: column; gap: 18px;">
                 <p style="font-size: 13px; color: var(--gray);">Administrator Panel: Create accounts, edit accounts, or toggle campus MDM policies.</p>
                 
-                <!-- Create Account Section -->
                 <div style="background: rgba(26,147,147,0.05); padding: 12px; border-radius: 8px; border: 1px solid var(--light-gray);">
                     <label style="font-size: 13px; font-weight: bold; display: block; margin-bottom: 8px;">Create New User Account</label>
                     <div style="display: flex; flex-direction: column; gap: 8px;">
@@ -594,6 +597,19 @@
         </div>
     </div>
 
+    <!-- Teacher Edit Record Modal -->
+    <div id="teacher-edit-modal" class="modal-overlay hidden">
+        <div class="modal-card" style="width: 450px;">
+            <div class="card-header">
+                <span id="teacher-edit-modal-title">✏️ Edit Record</span>
+                <button class="btn-sm" onclick="closeTeacherEditModal()">Close</button>
+            </div>
+            <div id="teacher-edit-form-body" style="display: flex; flex-direction: column; gap: 12px;">
+                <!-- Dynamically populated edit fields -->
+            </div>
+        </div>
+    </div>
+
     <script>
         const localizedDict = {
             "portal_title": { english: "Binary Portability Premium+", indonesia: "Binary Portability Premium+", chinese: "Binary Portability Premium+" },
@@ -615,7 +631,6 @@
             "page_settings": { english: "App Settings", indonesia: "Pengaturan Aplikasi", chinese: "应用设置" },
             "page_teacher": { english: "Teacher Control Panel", indonesia: "Panel Kontrol Guru", chinese: "教师控制面板" },
 
-            // Dashboard Widgets & Elements
             "hw_title": { english: "Homework & Assignments", indonesia: "PR & Tugas", chinese: "家庭作业与任务" },
             "ovo_balance_title": { english: "OVO Digital Wallet Balance", indonesia: "Saldo Dompet Digital OVO", chinese: "OVO 数字钱包余额" },
             "open_wallet": { english: "Open Wallet", indonesia: "Buka Dompet", chinese: "打开钱包" },
@@ -623,17 +638,14 @@
             "no_homework": { english: "No pending homework assigned.", indonesia: "Tidak ada PR yang tertunda.", chinese: "没有待办作业。" },
             "no_announcements": { english: "No current announcements for your class.", indonesia: "Tidak ada pengumuman untuk kelas Anda.", chinese: "您的班级当前没有公告。" },
             
-            // Teacher Publisher
-            "teacher_publisher_title": { english: "Teacher Portal Publisher (Announcements, Events, SIP, CCA)", indonesia: "Penerbit Portal Guru (Pengumuman, Acara, SIP, CCA)", chinese: "教师门户发布器（公告、活动、SIP、社团）" },
+            "teacher_publisher_title": { english: "Teacher Master Control Hub (Trash, SIP/CCA, Labs, Attendance, Transactions)", indonesia: "Pusat Kontrol Guru (Kebersihan, SIP/CCA, Lab, Absensi, Transaksi)", chinese: "教师综合控制中心（清洁、SIP/社团、实验室、考勤、交易）" },
             "pub_type_announcement": { english: "Announcement", indonesia: "Pengumuman", chinese: "公告" },
-            "pub_type_homework": { english: "Homework", indonesia: "PR / Tugas", chinese: "作业" },
             "pub_all_grades": { english: "All Grades", indonesia: "Semua Tingkat", chinese: "所有年级" },
             "pub_all_classes": { english: "All Classes", indonesia: "Semua Kelas", chinese: "所有班级" },
             "pub_title_placeholder": { english: "Title / Subject (e.g. Mathematics)", indonesia: "Judul / Mata Pelajaran (cth. Matematika)", chinese: "标题 / 科目（例如：数学）" },
             "pub_desc_placeholder": { english: "Details / Task content...", indonesia: "Detail / Konten tugas...", chinese: "详细信息 / 任务内容..." },
             "pub_btn": { english: "Publish Item", indonesia: "Publikasikan Item", chinese: "发布项目" },
 
-            // OVO Page
             "ovo_card_header": { english: "BINARY PORTABILITY OVO", indonesia: "BINARY PORTABILITY OVO", chinese: "BINARY PORTABILITY OVO" },
             "ovo_student_badge": { english: "STUDENT BBS", indonesia: "SISWA BBS", chinese: "培民学生" },
             "ovo_teacher_badge": { english: "FACULTY STAFF", indonesia: "STAF PENGAJAR", chinese: "教职工" },
@@ -652,7 +664,6 @@
             "th_category": { english: "Category", indonesia: "Kategori", chinese: "类别" },
             "th_amount": { english: "Amount", indonesia: "Jumlah", chinese: "金额" },
 
-            // Lab Page
             "lab_control_title": { english: "Teacher Lab Booking Control", indonesia: "Kontrol Pemesanan Lab Guru", chinese: "教师实验室预订控制" },
             "lab_name_ph": { english: "Lab Name (e.g. Physics Lab 1)", indonesia: "Nama Lab (cth. Lab Fisika 1)", chinese: "实验室名称（例如：物理实验室 1）" },
             "lab_time_ph": { english: "Time Slot (e.g. 10:00 - 11:30)", indonesia: "Slot Waktu (cth. 10:00 - 11:30)", chinese: "时间段（例如：10:00 - 11:30）" },
@@ -665,11 +676,9 @@
             "th_teacher": { english: "Teacher", indonesia: "Guru", chinese: "教师" },
             "th_status": { english: "Status", indonesia: "Status", chinese: "状态" },
 
-            // Classroom Apps Page
             "classroom_workspace_title": { english: "Binary Portability Student iPad & Cloud Workspace", indonesia: "Ruang Kerja Cloud & iPad Siswa Binary Portability", chinese: "Binary Portability 学生 iPad 与云工作区" },
             "classroom_workspace_desc": { english: "Access authorized learning tools and productivity apps for classroom engagement.", indonesia: "Akses alat pembelajaran resmi dan aplikasi produktivitas untuk kelas.", chinese: "访问授权的学习工具和生产力应用程序以进行课堂互动。" },
 
-            // Attendance Page
             "att_gen_title": { english: "Teacher QR Code Generator (Generate Only)", indonesia: "Generator Kode QR Guru (Hanya Pembuatan)", chinese: "教师二维码生成器（仅生成）" },
             "att_gen_desc": { english: "Generate an official attendance QR code for student scanning.", indonesia: "Hasilkan kode QR absensi resmi untuk dipindai siswa.", chinese: "生成供学生扫描的官方考勤二维码。" },
             "gen_qr_btn": { english: "Generate QR", indonesia: "Hasilkan QR", chinese: "生成二维码" },
@@ -680,8 +689,7 @@
             "att_sched_title": { english: "Today's Attendance Schedule", indonesia: "Jadwal Absensi Hari Ini", chinese: "今日考勤日程" },
             "th_subject": { english: "Subject", indonesia: "Mata Pelajaran", chinese: "科目" },
 
-            // Events Page
-            "events_teacher_title": { english: "Teacher Event / SIP / CCA Management (Targeted Class & Grade)", indonesia: "Manajemen Acara / SIP / CCA Guru", chinese: "教师活动 / SIP / 社团管理" },
+            "events_teacher_title": { english: "Teacher Event / SIP / CCA Management", indonesia: "Manajemen Acara / SIP / CCA Guru", chinese: "教师活动 / SIP / 社团管理" },
             "ev_name_ph": { english: "Name / Title", indonesia: "Nama / Judul", chinese: "名称 / 标题" },
             "ev_loc_ph": { english: "Location", indonesia: "Lokasi", chinese: "地点" },
             "add_item_btn": { english: "Add Item", indonesia: "Tambah Item", chinese: "添加项目" },
@@ -693,7 +701,6 @@
             "th_capacity": { english: "Capacity", indonesia: "Kapasitas", chinese: "容量" },
             "th_action": { english: "Action", indonesia: "Tindakan", chinese: "操作" },
 
-            // Trash Page
             "trash_report_title": { english: "Report Campus Litter / Cleanliness Issue", indonesia: "Laporkan Sampah Kampus / Masalah Kebersihan", chinese: "报告校园垃圾 / 清洁问题" },
             "trash_input_ph": { english: "Location and issue details", indonesia: "Lokasi dan detail masalah", chinese: "地点和问题详情" },
             "submit_report_btn": { english: "Submit Report", indonesia: "Kirim Laporan", chinese: "提交报告" },
@@ -701,7 +708,6 @@
             "th_details": { english: "Details", indonesia: "Detail", chinese: "详情" },
             "th_offender": { english: "Offender", indonesia: "Pelanggar", chinese: "违规者" },
 
-            // Settings Page
             "settings_profile_title": { english: "Per-Account Profile & Username Settings", indonesia: "Pengaturan Profil & Nama Pengguna Per Akun", chinese: "每个账号的个人资料与用户名设置" },
             "settings_profile_desc": { english: "Settings here apply exclusively to this account profile.", indonesia: "Pengaturan di sini berlaku eksklusif untuk profil akun ini.", chinese: "此处的设置仅适用于此账号个人资料。" },
             "display_name_label": { english: "Display Name", indonesia: "Nama Tampilan", chinese: "显示名称" },
@@ -714,7 +720,6 @@
             "role_label_info": { english: "Role", indonesia: "Peran", chinese: "角色" },
             "class_group_label": { english: "Class / Group", indonesia: "Kelas / Grup", chinese: "班级 / 组别" },
 
-            // Language Selector inside settings
             "settings_lang_title": { english: "Language Settings", indonesia: "Pengaturan Bahasa", chinese: "语言设置" },
             "select_lang_label": { english: "Portal Display Language", indonesia: "Bahasa Tampilan Portal", chinese: "门户显示语言" }
         };
@@ -748,35 +753,35 @@
         ];
 
         let transactions = [
-            { title: "Cafeteria Lunch", category: "Food", amount: -35000, date: "2026-06-06 12:15", type: "deduct" },
-            { title: "Parent Top-Up", category: "Deposit", amount: 100000, date: "2026-06-05 09:00", type: "add" }
+            { id: 1, title: "Cafeteria Lunch", category: "Food", amount: -35000, date: "2026-06-06 12:15", type: "deduct" },
+            { id: 2, title: "Parent Top-Up", category: "Deposit", amount: 100000, date: "2026-06-05 09:00", type: "add" }
         ];
 
         let labBookings = [
-            { name: "Physics Lab 1", time: "08:00 - 09:30", class: "SEC1-Zeal", teacher: "Mr. John", status: "Available" }
+            { id: 1, name: "Physics Lab 1", time: "08:00 - 09:30", class: "SEC1-Zeal", teacher: "Mr. John", status: "Available" }
         ];
 
         let announcementsList = [
-            { title: "Mid-Term Examination Schedule Released", grade: "All", class: "All", content: "Please check your portal schedule for exam rooms.", date: "2026-06-01" }
+            { id: 1, title: "Mid-Term Examination Schedule Released", grade: "All", class: "All", content: "Please check your portal schedule for exam rooms.", date: "2026-06-01" }
         ];
 
         let homeworkList = [
-            { subject: "Mathematics", grade: "sec1", class: "zeal", task: "Complete Chapter 4 Problem Set", due: "2026-06-10" }
+            { id: 1, subject: "Mathematics", grade: "sec1", class: "zeal", task: "Complete Chapter 4 Problem Set", due: "2026-06-10" }
         ];
 
         let eventsList = [
-            { name: "BBS Annual Sports Day", category: "Event", grade: "All", class: "All", location: "School Stadium", date: "2026-06-20", capacity: 150, registered: 45, status: "Open" },
-            { name: "Basketball Club (CCA)", category: "CCA", grade: "All", class: "All", location: "Indoor Court", date: "Every Wednesday", capacity: 30, registered: 18, status: "Open" },
-            { name: "Community Service (SIP)", category: "SIP", grade: "All", class: "All", location: "Local Orphanage", date: "2026-06-25", capacity: 50, registered: 32, status: "Open" }
+            { id: 1, name: "BBS Annual Sports Day", category: "Event", grade: "All", class: "All", location: "School Stadium", date: "2026-06-20", capacity: 150, registered: 45, status: "Open" },
+            { id: 2, name: "Basketball Club (CCA)", category: "CCA", grade: "All", class: "All", location: "Indoor Court", date: "Every Wednesday", capacity: 30, registered: 18, status: "Open" },
+            { id: 3, name: "Community Service (SIP)", category: "SIP", grade: "All", class: "All", location: "Local Orphanage", date: "2026-06-25", capacity: 50, registered: 32, status: "Open" }
         ];
 
         let trashReports = [
-            { details: "Plastic bottles near cafeteria", offender: "-", status: "Pending" }
+            { id: 1, details: "Plastic bottles near cafeteria", offender: "-", status: "Pending" }
         ];
 
         let scheduleList = [
-            { time: "07:30 - 09:00", subject: "Foundation Mathematics", status: "PRESENT" },
-            { time: "09:15 - 10:45", subject: "General Science", status: "PRESENT" }
+            { id: 1, time: "07:30 - 09:00", subject: "Foundation Mathematics", status: "PRESENT" },
+            { id: 2, time: "09:15 - 10:45", subject: "General Science", status: "PRESENT" }
         ];
 
         let html5QrCodeScanner = null;
@@ -893,7 +898,6 @@
             }
         }
 
-        // Secret Admin Control Panel Trigger from Login Screen
         function triggerAdminSecret() {
             let pass = prompt("Enter Admin Security Passcode:");
             if(pass === "zane is the best yesyes and he supports cash to ash") {
@@ -1035,7 +1039,6 @@
                 </div>`;
             });
 
-            // Teacher portal view for logged-in teachers (viewing announcements, new events, new sip, new cca)
             if(currentUser.role === 'teacher') {
                 navHtml += `<div class="nav-item ${activePage === 'page_teacher' ? 'active' : ''}" onclick="switchPage('page_teacher')">
                     <span>👨‍🏫</span>
@@ -1309,7 +1312,7 @@
             } else if (activePage === 'page_trash') {
                 let trHtml = '';
                 trashReports.forEach(t => {
-                    trHtml += `<tr><td>${t.details}</td><td>${t.offender}</td><td><span class="badge badge-orange">${t.status}</span></td><td>${currentUser.role === 'teacher' ? '<button class="btn-sm" onclick="resolveTrash()">Resolve</button>' : ''}</td></tr>`;
+                    trHtml += `<tr><td>${t.details}</td><td>${t.offender}</td><td><span class="badge badge-orange">${t.status}</span></td></tr>`;
                 });
 
                 contentArea.innerHTML = `
@@ -1325,7 +1328,7 @@
                         <div class="card">
                             <div class="card-header"><span>${localizedDict['trash_active_title'][currentLang]}</span></div>
                             <table>
-                                <tr><th>${localizedDict['th_details'][currentLang]}</th><th>${localizedDict['th_offender'][currentLang]}</th><th>${localizedDict['th_status'][currentLang]}</th><th>${localizedDict['th_action'][currentLang]}</th></tr>
+                                <tr><th>${localizedDict['th_details'][currentLang]}</th><th>${localizedDict['th_offender'][currentLang]}</th><th>${localizedDict['th_status'][currentLang]}</th></tr>
                                 ${trHtml}
                             </table>
                         </div>
@@ -1379,91 +1382,292 @@
                         </div>
                     </div>`;
             } else if (activePage === 'page_teacher' && currentUser.role === 'teacher') {
-                // Teacher Portal Control Panel (Viewing announcements, new announcements, new event, new sip, new cca)
-                let annHtml = '';
-                announcementsList.forEach(a => {
-                    annHtml += `<p style="font-size:13px; margin-bottom:6px;">• <strong>[${a.grade.toUpperCase()} / ${a.class.toUpperCase()}]</strong> ${a.title}: ${a.content}</p>`;
+                // Teacher Master Control Panel (Add, Edit, Remove for Trash, SIP/CCA, Labs, Attendance, Transactions)
+                let trashRows = '';
+                trashReports.forEach(t => {
+                    trashRows += `<tr><td>${t.details}</td><td>${t.status}</td><td><button class="btn-sm" style="padding:4px 8px;" onclick="openTeacherEdit('trash', ${t.id})">Edit</button> <button class="btn-sm btn-danger" style="padding:4px 8px;" onclick="deleteRecord('trash', ${t.id})">Del</button></td></tr>`;
+                });
+
+                let eventsRows = '';
+                eventsList.forEach(e => {
+                    eventsRows += `<tr><td>[${e.category}] ${e.name}</td><td>${e.location}</td><td><button class="btn-sm" style="padding:4px 8px;" onclick="openTeacherEdit('event', ${e.id})">Edit</button> <button class="btn-sm btn-danger" style="padding:4px 8px;" onclick="deleteRecord('event', ${e.id})">Del</button></td></tr>`;
+                });
+
+                let schedRows = '';
+                scheduleList.forEach(s => {
+                    schedRows += `<tr><td>${s.time}</td><td>${s.subject}</td><td><button class="btn-sm" style="padding:4px 8px;" onclick="openTeacherEdit('attendance', ${s.id})">Edit</button> <button class="btn-sm btn-danger" style="padding:4px 8px;" onclick="deleteRecord('attendance', ${s.id})">Del</button></td></tr>`;
+                });
+
+                let labRows = '';
+                labBookings.forEach(l => {
+                    labRows += `<tr><td>${l.name}</td><td>${l.time}</td><td><button class="btn-sm" style="padding:4px 8px;" onclick="openTeacherEdit('lab', ${l.id})">Edit</button> <button class="btn-sm btn-danger" style="padding:4px 8px;" onclick="deleteRecord('lab', ${l.id})">Del</button></td></tr>`;
+                });
+
+                let txRows = '';
+                transactions.forEach(t => {
+                    txRows += `<tr><td>${t.title}</td><td>Rp ${t.amount.toLocaleString()}</td><td><button class="btn-sm" style="padding:4px 8px;" onclick="openTeacherEdit('transaction', ${t.id})">Edit</button> <button class="btn-sm btn-danger" style="padding:4px 8px;" onclick="deleteRecord('transaction', ${t.id})">Del</button></td></tr>`;
                 });
 
                 contentArea.innerHTML = `
                     <div style="display:flex; flex-direction:column; gap:20px;">
                         <h1 style="font-size:26px;">${localizedDict['page_teacher'][currentLang]}</h1>
-                        
-                        <div class="card" style="background: rgba(26,147,147,0.05); border: 1px dashed var(--accent-color);">
-                            <div class="card-header"><span>➕ ${localizedDict['teacher_publisher_title'][currentLang]}</span></div>
-                            <div style="display:flex; flex-direction:column; gap:10px;">
-                                <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                                    <select id="pub-target-type" style="width:140px;" onchange="togglePublisherFields(this.value)">
-                                        <option value="announcement">Announcement</option>
-                                        <option value="event">New Event</option>
-                                        <option value="sip">New SIP</option>
-                                        <option value="cca">New CCA</option>
-                                    </select>
-                                    <select id="pub-grade" style="width:110px;">
-                                        <option value="All">${localizedDict['pub_all_grades'][currentLang]}</option>
-                                        <option value="sec1">SEC1</option>
-                                        <option value="sec2">SEC2</option>
-                                        <option value="sec3">SEC3</option>
-                                        <option value="sec4">SEC4</option>
-                                        <option value="jc1">JC1</option>
-                                    </select>
-                                    <select id="pub-class" style="width:110px;">
-                                        <option value="All">${localizedDict['pub_all_classes'][currentLang]}</option>
-                                        <option value="zeal">Zeal</option>
-                                        <option value="truth">Truth</option>
-                                        <option value="peace">Peace</option>
-                                        <option value="grace">Grace</option>
-                                        <option value="faith">Faith</option>
-                                    </select>
-                                </div>
-                                <input type="text" id="pub-title" placeholder="${localizedDict['pub_title_placeholder'][currentLang]}">
-                                <div id="pub-location-box" class="hidden">
-                                    <input type="text" id="pub-location" placeholder="Location / Venue (e.g. School Stadium)">
-                                </div>
-                                <textarea id="pub-desc" placeholder="${localizedDict['pub_desc_placeholder'][currentLang]}" rows="2"></textarea>
-                                <button class="btn-sm" onclick="teacherPublishItem()">${localizedDict['pub_btn'][currentLang]}</button>
-                            </div>
+                        <p style="font-size:13px; color:var(--gray);">Master Control Hub: Add, Edit, or Remove items across Campus modules.</p>
+
+                        <!-- 1. SIP & CCA / Events Management -->
+                        <div class="card">
+                            <div class="card-header"><span>📅 Manage SIP, CCA & Events</span> <button class="btn-sm" onclick="openTeacherAdd('event')">+ Add New</button></div>
+                            <table>
+                                <tr><th>Name & Category</th><th>Location</th><th>Actions</th></tr>
+                                ${eventsRows}
+                            </table>
                         </div>
 
+                        <!-- 2. Trash Reports Management -->
                         <div class="card">
-                            <div class="card-header"><span>👁️ Current Published Announcements & Activities View</span></div>
-                            <div style="max-height: 250px; overflow-y: auto;">
-                                ${annHtml}
-                            </div>
+                            <div class="card-header"><span>🗑️ Manage Trash Reports</span></div>
+                            <table>
+                                <tr><th>Details</th><th>Status</th><th>Actions</th></tr>
+                                ${trashRows}
+                            </table>
+                        </div>
+
+                        <!-- 3. Attendance Schedule Management -->
+                        <div class="card">
+                            <div class="card-header"><span>📱 Manage Attendance Schedule</span> <button class="btn-sm" onclick="openTeacherAdd('attendance')">+ Add Slot</button></div>
+                            <table>
+                                <tr><th>Time</th><th>Subject</th><th>Actions</th></tr>
+                                ${schedRows}
+                            </table>
+                        </div>
+
+                        <!-- 4. Lab Availability Management -->
+                        <div class="card">
+                            <div class="card-header"><span>🧪 Manage Lab Availability</span> <button class="btn-sm" onclick="openTeacherAdd('lab')">+ Add Lab Slot</button></div>
+                            <table>
+                                <tr><th>Lab Name</th><th>Time</th><th>Actions</th></tr>
+                                ${labRows}
+                            </table>
+                        </div>
+
+                        <!-- 5. Transaction History Management -->
+                        <div class="card">
+                            <div class="card-header"><span>💳 Manage OVO Transactions</span> <button class="btn-sm" onclick="openTeacherAdd('transaction')">+ Add Transaction</button></div>
+                            <table>
+                                <tr><th>Title</th><th>Amount</th><th>Actions</th></tr>
+                                ${txRows}
+                            </table>
                         </div>
                     </div>`;
             }
         }
 
-        function togglePublisherFields(type) {
-            let locBox = document.getElementById('pub-location-box');
-            if(type === 'event' || type === 'sip' || type === 'cca') {
-                locBox.classList.remove('hidden');
-            } else {
-                locBox.classList.add('hidden');
+        // Teacher CRUD modals & handlers
+        let editingTarget = { type: null, id: null };
+
+        function openTeacherEdit(type, id) {
+            editingTarget = { type, id };
+            let bodyHtml = '';
+            let modalTitle = document.getElementById('teacher-edit-modal-title');
+
+            if(type === 'event') {
+                modalTitle.innerText = "✏️ Edit SIP / CCA / Event";
+                let item = eventsList.find(x => x.id === id);
+                bodyHtml = `
+                    <label style="font-size:12px; font-weight:bold;">Name</label>
+                    <input type="text" id="edit-ev-name" value="${item.name}">
+                    <label style="font-size:12px; font-weight:bold;">Category</label>
+                    <select id="edit-ev-cat"><option value="Event" ${item.category==='Event'?'selected':''}>Event</option><option value="CCA" ${item.category==='CCA'?'selected':''}>CCA</option><option value="SIP" ${item.category==='SIP'?'selected':''}>SIP</option></select>
+                    <label style="font-size:12px; font-weight:bold;">Location</label>
+                    <input type="text" id="edit-ev-loc" value="${item.location}">
+                    <button class="btn-sm" onclick="saveTeacherEdit()">Save Changes</button>
+                `;
+            } else if(type === 'trash') {
+                modalTitle.innerText = "✏️ Edit Trash Report";
+                let item = trashReports.find(x => x.id === id);
+                bodyHtml = `
+                    <label style="font-size:12px; font-weight:bold;">Details</label>
+                    <input type="text" id="edit-tr-det" value="${item.details}">
+                    <label style="font-size:12px; font-weight:bold;">Status</label>
+                    <select id="edit-tr-stat"><option value="Pending" ${item.status==='Pending'?'selected':''}>Pending</option><option value="Resolved" ${item.status==='Resolved'?'selected':''}>Resolved</option></select>
+                    <button class="btn-sm" onclick="saveTeacherEdit()">Save Changes</button>
+                `;
+            } else if(type === 'attendance') {
+                modalTitle.innerText = "✏️ Edit Attendance Schedule";
+                let item = scheduleList.find(x => x.id === id);
+                bodyHtml = `
+                    <label style="font-size:12px; font-weight:bold;">Time</label>
+                    <input type="text" id="edit-att-time" value="${item.time}">
+                    <label style="font-size:12px; font-weight:bold;">Subject</label>
+                    <input type="text" id="edit-att-subj" value="${item.subject}">
+                    <button class="btn-sm" onclick="saveTeacherEdit()">Save Changes</button>
+                `;
+            } else if(type === 'lab') {
+                modalTitle.innerText = "✏️ Edit Lab Availability";
+                let item = labBookings.find(x => x.id === id);
+                bodyHtml = `
+                    <label style="font-size:12px; font-weight:bold;">Lab Name</label>
+                    <input type="text" id="edit-lab-name" value="${item.name}">
+                    <label style="font-size:12px; font-weight:bold;">Time Slot</label>
+                    <input type="text" id="edit-lab-time" value="${item.time}">
+                    <button class="btn-sm" onclick="saveTeacherEdit()">Save Changes</button>
+                `;
+            } else if(type === 'transaction') {
+                modalTitle.innerText = "✏️ Edit OVO Transaction";
+                let item = transactions.find(x => x.id === id);
+                bodyHtml = `
+                    <label style="font-size:12px; font-weight:bold;">Title</label>
+                    <input type="text" id="edit-tx-title" value="${item.title}">
+                    <label style="font-size:12px; font-weight:bold;">Amount (Rp)</label>
+                    <input type="number" id="edit-tx-amt" value="${item.amount}">
+                    <button class="btn-sm" onclick="saveTeacherEdit()">Save Changes</button>
+                `;
             }
+
+            document.getElementById('teacher-edit-form-body').innerHTML = bodyHtml;
+            document.getElementById('teacher-edit-modal').classList.remove('hidden');
         }
 
-        function teacherPublishItem() {
-            let type = document.getElementById('pub-target-type').value;
-            let grade = document.getElementById('pub-grade').value;
-            let className = document.getElementById('pub-class').value;
-            let title = document.getElementById('pub-title').value;
-            let desc = document.getElementById('pub-desc').value;
-            let location = document.getElementById('pub-location') ? document.getElementById('pub-location').value : '';
+        function closeTeacherEditModal() {
+            document.getElementById('teacher-edit-modal').classList.add('hidden');
+        }
 
-            if(!title || !desc) { alert('Please fill in title and description.'); return; }
-
-            if(type === 'announcement') {
-                announcementsList.unshift({ title: title, grade: grade, class: className, content: desc, date: "2026-06-06" });
-                alert('Announcement successfully published!');
-            } else {
-                eventsList.unshift({ name: title, category: type.toUpperCase(), grade: grade, class: className, location: location || 'Campus', date: "2026-06-30", capacity: 40, registered: 0, status: "Open" });
-                alert(`New ${type.toUpperCase()} successfully created and published!`);
+        function saveTeacherEdit() {
+            let { type, id } = editingTarget;
+            if(type === 'event') {
+                let item = eventsList.find(x => x.id === id);
+                item.name = document.getElementById('edit-ev-name').value;
+                item.category = document.getElementById('edit-ev-cat').value;
+                item.location = document.getElementById('edit-ev-loc').value;
+            } else if(type === 'trash') {
+                let item = trashReports.find(x => x.id === id);
+                item.details = document.getElementById('edit-tr-det').value;
+                item.status = document.getElementById('edit-tr-stat').value;
+            } else if(type === 'attendance') {
+                let item = scheduleList.find(x => x.id === id);
+                item.time = document.getElementById('edit-att-time').value;
+                item.subject = document.getElementById('edit-att-subj').value;
+            } else if(type === 'lab') {
+                let item = labBookings.find(x => x.id === id);
+                item.name = document.getElementById('edit-lab-name').value;
+                item.time = document.getElementById('edit-lab-time').value;
+            } else if(type === 'transaction') {
+                let item = transactions.find(x => x.id === id);
+                item.title = document.getElementById('edit-tx-title').value;
+                item.amount = parseFloat(document.getElementById('edit-tx-amt').value);
             }
-            document.getElementById('pub-title').value = '';
-            document.getElementById('pub-desc').value = '';
-            if(document.getElementById('pub-location')) document.getElementById('pub-location').value = '';
+
+            alert("Record successfully updated!");
+            closeTeacherEditModal();
+            renderPage();
+        }
+
+        function openTeacherAdd(type) {
+            editingTarget = { type, id: null };
+            let bodyHtml = '';
+            let modalTitle = document.getElementById('teacher-edit-modal-title');
+
+            if(type === 'event') {
+                modalTitle.innerText = "➕ Add New SIP / CCA / Event";
+                bodyHtml = `
+                    <label style="font-size:12px; font-weight:bold;">Name / Title</label>
+                    <input type="text" id="add-ev-name" placeholder="Event Name">
+                    <label style="font-size:12px; font-weight:bold;">Category</label>
+                    <select id="add-ev-cat"><option value="Event">Event</option><option value="CCA">CCA</option><option value="SIP">SIP</option></select>
+                    <label style="font-size:12px; font-weight:bold;">Location</label>
+                    <input type="text" id="add-ev-loc" placeholder="Location">
+                    <button class="btn-sm" onclick="saveTeacherAdd()">Add Item</button>
+                `;
+            } else if(type === 'attendance') {
+                modalTitle.innerText = "➕ Add Attendance Schedule";
+                bodyHtml = `
+                    <label style="font-size:12px; font-weight:bold;">Time Slot</label>
+                    <input type="text" id="add-att-time" placeholder="08:00 - 09:30">
+                    <label style="font-size:12px; font-weight:bold;">Subject</label>
+                    <input type="text" id="add-att-subj" placeholder="Subject Name">
+                    <button class="btn-sm" onclick="saveTeacherAdd()">Add Slot</button>
+                `;
+            } else if(type === 'lab') {
+                modalTitle.innerText = "➕ Add Lab Availability Slot";
+                bodyHtml = `
+                    <label style="font-size:12px; font-weight:bold;">Lab Name</label>
+                    <input type="text" id="add-lab-name" placeholder="Physics Lab 2">
+                    <label style="font-size:12px; font-weight:bold;">Time Slot</label>
+                    <input type="text" id="add-lab-time" placeholder="10:00 - 11:30">
+                    <button class="btn-sm" onclick="saveTeacherAdd()">Add Lab</button>
+                `;
+            } else if(type === 'transaction') {
+                modalTitle.innerText = "➕ Add OVO Transaction";
+                bodyHtml = `
+                    <label style="font-size:12px; font-weight:bold;">Title</label>
+                    <input type="text" id="add-tx-title" placeholder="Store purchase / Topup">
+                    <label style="font-size:12px; font-weight:bold;">Amount (Rp, negative for expense)</label>
+                    <input type="number" id="add-tx-amt" placeholder="-25000">
+                    <button class="btn-sm" onclick="saveTeacherAdd()">Add Transaction</button>
+                `;
+            }
+
+            document.getElementById('teacher-edit-form-body').innerHTML = bodyHtml;
+            document.getElementById('teacher-edit-modal').classList.remove('hidden');
+        }
+
+        function saveTeacherAdd() {
+            let type = editingTarget.type;
+            let newId = Date.now();
+
+            if(type === 'event') {
+                eventsList.unshift({
+                    id: newId,
+                    name: document.getElementById('add-ev-name').value || 'New Activity',
+                    category: document.getElementById('add-ev-cat').value,
+                    grade: 'All', class: 'All',
+                    location: document.getElementById('add-ev-loc').value || 'Campus',
+                    date: '2026-06-30', capacity: 50, registered: 0, status: 'Open'
+                });
+            } else if(type === 'attendance') {
+                scheduleList.unshift({
+                    id: newId,
+                    time: document.getElementById('add-att-time').value || '09:00 - 10:30',
+                    subject: document.getElementById('add-att-subj').value || 'New Session',
+                    status: 'PRESENT'
+                });
+            } else if(type === 'lab') {
+                labBookings.unshift({
+                    id: newId,
+                    name: document.getElementById('add-lab-name').value || 'Science Lab',
+                    time: document.getElementById('add-lab-time').value || '11:00 - 12:30',
+                    class: 'SEC1-Zeal', teacher: currentUser.name, status: 'Available'
+                });
+            } else if(type === 'transaction') {
+                transactions.unshift({
+                    id: newId,
+                    title: document.getElementById('add-tx-title').value || 'Expense',
+                    category: 'General',
+                    amount: parseFloat(document.getElementById('add-tx-amt').value) || -10000,
+                    date: '2026-06-06 14:00', type: 'manual'
+                });
+            }
+
+            alert("Item successfully added!");
+            closeTeacherEditModal();
+            renderPage();
+        }
+
+        function deleteRecord(type, id) {
+            if(!confirm("Are you sure you want to delete this record?")) return;
+
+            if(type === 'event') {
+                eventsList = eventsList.filter(x => x.id !== id);
+            } else if(type === 'trash') {
+                trashReports = trashReports.filter(x => x.id !== id);
+            } else if(type === 'attendance') {
+                scheduleList = scheduleList.filter(x => x.id !== id);
+            } else if(type === 'lab') {
+                labBookings = labBookings.filter(x => x.id !== id);
+            } else if(type === 'transaction') {
+                transactions = transactions.filter(x => x.id !== id);
+            }
+
+            alert("Record successfully deleted!");
             renderPage();
         }
 
@@ -1492,9 +1696,7 @@
                     alert(`Attendance Successfully Logged! Verified QR: ${decodedTest}`);
                     stopCameraScannerSafe();
                 },
-                (errorMessage) => {
-                    // Scanning active framing
-                }
+                (errorMessage) => {}
             ).catch(err => {
                 alert(`Camera access error or unsupported browser: ${err}`);
                 html5QrCodeScanner = null;
@@ -1535,7 +1737,7 @@
             if(isNaN(amt) || amt <= 0 || !name) { alert('Please enter valid merchant details'); return; }
             if(ovoBalance < amt) { alert('Insufficient wallet balance'); return; }
             ovoBalance -= amt;
-            transactions.unshift({ title: name, category: "Purchase", amount: -amt, date: "2026-06-06 20:00", type: "dedurct" });
+            transactions.unshift({ id: Date.now(), title: name, category: "Purchase", amount: -amt, date: "2026-06-06 20:00", type: "deduct" });
             alert(`Payment of Rp ${amt.toLocaleString()} successful!`);
             renderPage();
         }
@@ -1543,7 +1745,7 @@
         function rechargeFaculty(amt) {
             facultyAllowance += amt;
             ovoBalance += amt;
-            transactions.unshift({ title: "Faculty Allowance Recharge", category: "Allowance", amount: amt, date: "2026-06-06 20:00", type: "add" });
+            transactions.unshift({ id: Date.now(), title: "Faculty Allowance Recharge", category: "Allowance", amount: amt, date: "2026-06-06 20:00", type: "add" });
             alert(`Successfully recharged Rp ${amt.toLocaleString()}`);
             renderPage();
         }
@@ -1556,7 +1758,7 @@
             let name = document.getElementById('lab-name').value;
             let time = document.getElementById('lab-time').value;
             if(!name || !time) { alert('Fill all fields'); return; }
-            labBookings.push({ name: name, time: time, class: `${currentUser.grade.toUpperCase()}-${currentUser.className.toUpperCase()}`, teacher: currentUser.name, status: "Available" });
+            labBookings.push({ id: Date.now(), name: name, time: time, class: `${currentUser.grade.toUpperCase()}-${currentUser.className.toUpperCase()}`, teacher: currentUser.name, status: "Available" });
             alert('Laboratory slot added successfully!');
             renderPage();
         }
@@ -1568,13 +1770,9 @@
         function submitTrash() {
             let desc = document.getElementById('trash-desc').value;
             if(!desc) { alert('Enter cleanliness report details'); return; }
-            trashReports.push({ details: desc, offender: "-", status: "Pending" });
+            trashReports.push({ id: Date.now(), details: desc, offender: "-", status: "Pending" });
             alert('Trash report submitted successfully.');
             renderPage();
-        }
-
-        function resolveTrash() {
-            alert('Cleanliness report marked as Resolved / Cleaned.');
         }
     </script>
 </body>
