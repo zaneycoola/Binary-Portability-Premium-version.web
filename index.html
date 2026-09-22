@@ -430,7 +430,7 @@
 
     <div id="login-container">
         <div class="login-card">
-            <button class="secret-admin-btn" onclick="triggerAdminSecret()" title="Admin Portal">⚙</button>
+            <button class="secret-admin-btn" onclick="triggerAdminSecret()" title="Admin Control Panel">⚙</button>
 
             <div class="login-header">
                 <h2 id="l-portal-title">Binary Portability Premium+ v.web</h2>
@@ -517,27 +517,79 @@
         <div class="main-content" id="main-content-area"></div>
     </div>
 
+    <!-- Admin Control Panel Modal (Login Screen Secret ⚙️) -->
     <div id="admin-modal-container" class="modal-overlay hidden">
         <div class="modal-card">
             <div class="card-header">
-                <span id="admin-modal-title">⚙️ Teacher Admin Hub (Account Registry View)</span>
+                <span id="admin-modal-title">⚙️ Master Admin Control Panel</span>
                 <button class="btn-sm" onclick="closeAdminModal()" id="admin-close-btn">Close</button>
             </div>
             <div style="display: flex; flex-direction: column; gap: 18px;">
-                <p id="admin-desc-text" style="font-size: 13px; color: var(--gray);">As a teacher, you can view all registered portal user accounts below for administrative reference. Note: Teachers cannot create new accounts here.</p>
+                <p style="font-size: 13px; color: var(--gray);">Administrator Panel: Create accounts, edit accounts, or toggle campus MDM policies.</p>
+                
+                <!-- Create Account Section -->
+                <div style="background: rgba(26,147,147,0.05); padding: 12px; border-radius: 8px; border: 1px solid var(--light-gray);">
+                    <label style="font-size: 13px; font-weight: bold; display: block; margin-bottom: 8px;">Create New User Account</label>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <input type="email" id="new-acc-email" placeholder="Email (@binabangsaschool.com)">
+                        <input type="password" id="new-acc-pass" placeholder="Password (min 6 chars)">
+                        <div style="display: flex; gap: 8px;">
+                            <select id="new-acc-role" onchange="toggleAdminRoleFields(this.value)">
+                                <option value="student">Student</option>
+                                <option value="teacher">Teacher / Staff</option>
+                            </select>
+                            <input type="text" id="new-acc-class" placeholder="Class / Group (e.g. sec1-zeal)">
+                        </div>
+                        <button class="btn-sm" onclick="adminCreateAccount()">Create Account</button>
+                    </div>
+                </div>
+
                 <div>
-                    <label id="admin-dir-label" style="font-size: 13px; font-weight: bold;">Registered Accounts Directory</label>
-                    <div style="max-height: 280px; overflow-y: auto; margin-top: 8px;">
+                    <label style="font-size: 13px; font-weight: bold;">Registered Accounts Management (Edit / View)</label>
+                    <div style="max-height: 220px; overflow-y: auto; margin-top: 8px;">
                         <table id="admin-accounts-table">
-                            <tr><th>Email</th><th>Role</th><th>Class</th><th>Password</th></tr>
+                            <tr><th>Email</th><th>Role</th><th>Class/Group</th><th>Password</th><th>Action</th></tr>
                         </table>
                     </div>
                 </div>
 
                 <div style="border-top: 1px solid var(--light-gray); padding-top: 12px;">
-                    <label id="admin-mdm-label" style="font-size: 13px; font-weight: bold;">MDM Focus Policy Control</label>
-                    <button class="btn-sm" style="margin-top: 8px; width: 100%;" onclick="toggleMDMGlobal()" id="admin-mdm-btn">Toggle Campus MDM Focus Mode</button>
+                    <label style="font-size: 13px; font-weight: bold;">MDM Focus Policy Control</label>
+                    <button class="btn-sm" style="margin-top: 8px; width: 100%;" onclick="toggleMDMGlobal()">Toggle Campus MDM Focus Mode</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Account Modal -->
+    <div id="edit-account-modal" class="modal-overlay hidden">
+        <div class="modal-card" style="width: 400px;">
+            <div class="card-header">
+                <span>✏️ Edit Account</span>
+                <button class="btn-sm" onclick="closeEditModal()">Close</button>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <input type="hidden" id="edit-original-email">
+                <div>
+                    <label style="font-size: 12px; font-weight: bold;">Email</label>
+                    <input type="email" id="edit-acc-email" disabled>
+                </div>
+                <div>
+                    <label style="font-size: 12px; font-weight: bold;">Password</label>
+                    <input type="text" id="edit-acc-pass">
+                </div>
+                <div>
+                    <label style="font-size: 12px; font-weight: bold;">Role</label>
+                    <select id="edit-acc-role">
+                        <option value="student">Student</option>
+                        <option value="teacher">Teacher / Staff</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="font-size: 12px; font-weight: bold;">Class / Group</label>
+                    <input type="text" id="edit-acc-class">
+                </div>
+                <button class="btn-sm" onclick="saveEditedAccount()">Save Changes</button>
             </div>
         </div>
     </div>
@@ -561,8 +613,7 @@
             "page_events": { english: "Events & CCA/SIP", indonesia: "Acara, SIP & CCA", chinese: "活动与社团" },
             "page_trash": { english: "Trash Finder & Reports", indonesia: "Pembersihan Kebersihan", chinese: "校园清洁与举报" },
             "page_settings": { english: "App Settings", indonesia: "Pengaturan Aplikasi", chinese: "应用设置" },
-            "page_admin": { english: "Admin Panel", indonesia: "Panel Admin", chinese: "管理面板" },
-            "page_teacher": { english: "Teacher Panel", indonesia: "Panel Guru", chinese: "教师面板" },
+            "page_teacher": { english: "Teacher Control Panel", indonesia: "Panel Kontrol Guru", chinese: "教师控制面板" },
 
             // Dashboard Widgets & Elements
             "hw_title": { english: "Homework & Assignments", indonesia: "PR & Tugas", chinese: "家庭作业与任务" },
@@ -573,14 +624,14 @@
             "no_announcements": { english: "No current announcements for your class.", indonesia: "Tidak ada pengumuman untuk kelas Anda.", chinese: "您的班级当前没有公告。" },
             
             // Teacher Publisher
-            "teacher_publisher_title": { english: "Teacher Quick Publisher (Announcements, Events, Homework)", indonesia: "Penerbit Cepat Guru (Pengumuman, Acara, PR)", chinese: "教师快速发布器（公告、活动、作业）" },
+            "teacher_publisher_title": { english: "Teacher Portal Publisher (Announcements, Events, SIP, CCA)", indonesia: "Penerbit Portal Guru (Pengumuman, Acara, SIP, CCA)", chinese: "教师门户发布器（公告、活动、SIP、社团）" },
             "pub_type_announcement": { english: "Announcement", indonesia: "Pengumuman", chinese: "公告" },
             "pub_type_homework": { english: "Homework", indonesia: "PR / Tugas", chinese: "作业" },
             "pub_all_grades": { english: "All Grades", indonesia: "Semua Tingkat", chinese: "所有年级" },
             "pub_all_classes": { english: "All Classes", indonesia: "Semua Kelas", chinese: "所有班级" },
             "pub_title_placeholder": { english: "Title / Subject (e.g. Mathematics)", indonesia: "Judul / Mata Pelajaran (cth. Matematika)", chinese: "标题 / 科目（例如：数学）" },
             "pub_desc_placeholder": { english: "Details / Task content...", indonesia: "Detail / Konten tugas...", chinese: "详细信息 / 任务内容..." },
-            "pub_btn": { english: "Publish to Class", indonesia: "Publikasikan ke Kelas", chinese: "发布到班级" },
+            "pub_btn": { english: "Publish Item", indonesia: "Publikasikan Item", chinese: "发布项目" },
 
             // OVO Page
             "ovo_card_header": { english: "BINARY PORTABILITY OVO", indonesia: "BINARY PORTABILITY OVO", chinese: "BINARY PORTABILITY OVO" },
@@ -665,15 +716,7 @@
 
             // Language Selector inside settings
             "settings_lang_title": { english: "Language Settings", indonesia: "Pengaturan Bahasa", chinese: "语言设置" },
-            "select_lang_label": { english: "Portal Display Language", indonesia: "Bahasa Tampilan Portal", chinese: "门户显示语言" },
-
-            // Admin & Teacher Panels
-            "admin_ctrl_title": { english: "Admin Panel - Account & MDM Management", indonesia: "Panel Admin - Manajemen Akun & MDM", chinese: "管理面板 - 账号与 MDM 管理" },
-            "admin_create_title": { english: "Create New Account", indonesia: "Buat Akun Baru", chinese: "创建新账号" },
-            "admin_edit_title": { english: "Edit Existing Account Passwords / Roles", indonesia: "Edit Kata Sandi / Peran Akun", chinese: "编辑现有账号密码/角色" },
-            "admin_mdm_ctrl_title": { english: "MDM Campus Focus Control", indonesia: "Kontrol Fokus Kampus MDM", chinese: "MDM 校园专注控制" },
-            "teacher_panel_title": { english: "Teacher Control Panel (Viewing & Quick Actions)", indonesia: "Panel Kontrol Guru (Tampilan & Aksi Cepat)", chinese: "教师控制面板（查看与快捷操作）" },
-            "teacher_view_accounts_title": { english: "View Registered Accounts", indonesia: "Lihat Akun Terdaftar", chinese: "查看注册账号" }
+            "select_lang_label": { english: "Portal Display Language", indonesia: "Bahasa Tampilan Portal", chinese: "门户显示语言" }
         };
 
         let currentLang = 'english';
@@ -766,13 +809,6 @@
             document.getElementById('l-select-grade-label').innerText = localizedDict['select_grade_label'][lang];
             document.getElementById('l-login-btn').innerText = localizedDict['login_btn'][lang];
             document.getElementById('l-sign-out').innerText = localizedDict['sign_out'][lang];
-            
-            document.getElementById('admin-modal-title').innerText = localizedDict['admin_modal_heading'] ? localizedDict['admin_modal_heading'][lang] : localizedDict['admin_ctrl_title'][lang];
-            document.getElementById('admin-close-btn').innerText = localizedDict['admin_close_btn'][lang];
-            document.getElementById('admin-desc-text').innerText = localizedDict['admin_modal_desc'][lang];
-            document.getElementById('admin-dir-label').innerText = localizedDict['admin_dir_heading'][lang];
-            document.getElementById('admin-mdm-label').innerText = localizedDict['admin_mdm_heading'][lang];
-            document.getElementById('admin-mdm-btn').innerText = localizedDict['admin_mdm_toggle_btn'][lang];
 
             if(!document.getElementById('app').classList.contains('hidden')) {
                 renderSidebar();
@@ -857,6 +893,7 @@
             }
         }
 
+        // Secret Admin Control Panel Trigger from Login Screen
         function triggerAdminSecret() {
             let pass = prompt("Enter Admin Security Passcode:");
             if(pass === "zane is the best yesyes and he supports cash to ash") {
@@ -871,17 +908,96 @@
             document.getElementById('admin-modal-container').classList.add('hidden');
         }
 
+        function toggleAdminRoleFields(role) {
+            let classField = document.getElementById('new-acc-class');
+            if(role === 'teacher') {
+                classField.value = 'Faculty Staff';
+            } else {
+                classField.value = 'sec1-zeal';
+            }
+        }
+
+        function adminCreateAccount() {
+            let email = document.getElementById('new-acc-email').value.toLowerCase().trim();
+            let pass = document.getElementById('new-acc-pass').value;
+            let role = document.getElementById('new-acc-role').value;
+            let className = document.getElementById('new-acc-class').value.trim();
+
+            if(!email || !email.endsWith('@binabangsaschool.com')) {
+                alert("Please enter a valid school email ending with @binabangsaschool.com");
+                return;
+            }
+            if(pass.length < 6) {
+                alert("Password must be at least 6 characters.");
+                return;
+            }
+            if(registeredAccounts.some(acc => acc.email === email)) {
+                alert("Account with this email already exists!");
+                return;
+            }
+
+            registeredAccounts.push({ email, pass, role, className });
+            accountProfiles[email] = {
+                name: email.split('@')[0].replace('.', ' ').toUpperCase(),
+                primaryColor: role === 'teacher' ? "#1f3459" : "#0D2140",
+                accentColor: "#1A9393"
+            };
+
+            alert("Account successfully created via Admin Control Panel!");
+            document.getElementById('new-acc-email').value = '';
+            document.getElementById('new-acc-pass').value = '';
+            renderAdminAccountsTable();
+        }
+
         function renderAdminAccountsTable() {
-            let html = `<tr><th>Email</th><th>Role</th><th>Class/Group</th><th>Password</th></tr>`;
+            let html = `<tr><th>Email</th><th>Role</th><th>Class/Group</th><th>Password</th><th>Action</th></tr>`;
             registeredAccounts.forEach(acc => {
                 html += `<tr>
                     <td>${acc.email}</td>
                     <td><span class="badge ${acc.role === 'teacher' ? 'badge-orange' : 'badge-green'}">${acc.role.toUpperCase()}</span></td>
                     <td>${acc.className}</td>
                     <td>${acc.pass}</td>
+                    <td><button class="btn-sm" style="padding: 4px 8px; font-size: 11px;" onclick="openEditAccountModal('${acc.email}')">Edit</button></td>
                 </tr>`;
             });
             document.getElementById('admin-accounts-table').innerHTML = html;
+        }
+
+        function openEditAccountModal(email) {
+            let acc = registeredAccounts.find(a => a.email === email);
+            if(!acc) return;
+            document.getElementById('edit-original-email').value = acc.email;
+            document.getElementById('edit-acc-email').value = acc.email;
+            document.getElementById('edit-acc-pass').value = acc.pass;
+            document.getElementById('edit-acc-role').value = acc.role;
+            document.getElementById('edit-acc-class').value = acc.className;
+            document.getElementById('edit-account-modal').classList.remove('hidden');
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-account-modal').classList.add('hidden');
+        }
+
+        function saveEditedAccount() {
+            let email = document.getElementById('edit-original-email').value;
+            let pass = document.getElementById('edit-acc-pass').value;
+            let role = document.getElementById('edit-acc-role').value;
+            let className = document.getElementById('edit-acc-class').value;
+
+            if(pass.length < 6) {
+                alert("Password must be at least 6 characters.");
+                return;
+            }
+
+            let acc = registeredAccounts.find(a => a.email === email);
+            if(acc) {
+                acc.pass = pass;
+                acc.role = role;
+                acc.className = className;
+                alert("Account updated successfully!");
+                closeEditModal();
+                renderAdminAccountsTable();
+            }
         }
 
         function toggleMDMGlobal() {
@@ -919,17 +1035,11 @@
                 </div>`;
             });
 
-            // Separate Control Panels: Admin gets admin panel (create/edit/mdm), Teacher gets teacher panel (view only + announcements/events/sip/cca)
+            // Teacher portal view for logged-in teachers (viewing announcements, new events, new sip, new cca)
             if(currentUser.role === 'teacher') {
                 navHtml += `<div class="nav-item ${activePage === 'page_teacher' ? 'active' : ''}" onclick="switchPage('page_teacher')">
                     <span>👨‍🏫</span>
                     <span>${localizedDict['page_teacher'][currentLang]}</span>
-                </div>`;
-            } else {
-                // If an admin user logged in or via secret account switch
-                navHtml += `<div class="nav-item ${activePage === 'page_admin' ? 'active' : ''}" onclick="switchPage('page_admin')">
-                    <span>⚙️</span>
-                    <span>${localizedDict['page_admin'][currentLang]}</span>
                 </div>`;
             }
 
@@ -982,39 +1092,6 @@
                             <h1 style="font-size:26px;">${localizedDict['welcome'][currentLang]}, ${currentUser.name}!</h1>
                             <p style="color: var(--accent-color);">Binary Portability Premium+ v.web Ecosystem (MDM Status: ${isMDMActive ? 'Active' : 'Disabled'})</p>
                         </div>
-                        
-                        ${currentUser.role === 'teacher' ? `
-                        <div class="card" style="background: rgba(26,147,147,0.05); border: 1px dashed var(--accent-color);">
-                            <div class="card-header"><span>➕ ${localizedDict['teacher_publisher_title'][currentLang]}</span></div>
-                            <div style="display:flex; flex-direction:column; gap:10px;">
-                                <div style="display:flex; gap:10px;">
-                                    <select id="pub-type" style="width:140px;">
-                                        <option value="announcement">${localizedDict['pub_type_announcement'][currentLang]}</option>
-                                        <option value="homework">${localizedDict['pub_type_homework'][currentLang]}</option>
-                                    </select>
-                                    <select id="pub-grade" style="width:110px;">
-                                        <option value="All">${localizedDict['pub_all_grades'][currentLang]}</option>
-                                        <option value="sec1">SEC1</option>
-                                        <option value="sec2">SEC2</option>
-                                        <option value="sec3">SEC3</option>
-                                        <option value="sec4">SEC4</option>
-                                        <option value="jc1">JC1</option>
-                                        <option value="jc2">JC2</option>
-                                    </select>
-                                    <select id="pub-class" style="width:110px;">
-                                        <option value="All">${localizedDict['pub_all_classes'][currentLang]}</option>
-                                        <option value="zeal">Zeal</option>
-                                        <option value="truth">Truth</option>
-                                        <option value="peace">Peace</option>
-                                        <option value="grace">Grace</option>
-                                        <option value="faith">Faith</option>
-                                    </select>
-                                </div>
-                                <input type="text" id="pub-title" placeholder="${localizedDict['pub_title_placeholder'][currentLang]}">
-                                <textarea id="pub-desc" placeholder="${localizedDict['pub_desc_placeholder'][currentLang]}" rows="2"></textarea>
-                                <button class="btn-sm" onclick="teacherPublishItem()">${localizedDict['pub_btn'][currentLang]}</button>
-                            </div>
-                        </div>` : ''}
 
                         <div class="dashboard-grid">
                             <div style="display:flex; flex-direction:column; gap:16px;">
@@ -1221,35 +1298,6 @@
                 contentArea.innerHTML = `
                     <div style="display:flex; flex-direction:column; gap:20px;">
                         <h1 style="font-size:26px;">${localizedDict['page_events'][currentLang]}</h1>
-                        
-                        ${currentUser.role === 'teacher' ? `
-                        <div class="card">
-                            <div class="card-header"><span>${localizedDict['events_teacher_title'][currentLang]}</span></div>
-                            <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                                <select id="ev-cat" style="width:110px;">
-                                    <option value="Event">Event</option>
-                                    <option value="SIP">SIP</option>
-                                    <option value="CCA">CCA</option>
-                                </select>
-                                <select id="ev-grade" style="width:100px;">
-                                    <option value="All">${localizedDict['pub_all_grades'][currentLang]}</option>
-                                    <option value="sec1">SEC1</option>
-                                    <option value="sec2">SEC2</option>
-                                    <option value="sec3">SEC3</option>
-                                    <option value="sec4">SEC4</option>
-                                </select>
-                                <select id="ev-class" style="width:100px;">
-                                    <option value="All">${localizedDict['pub_all_classes'][currentLang]}</option>
-                                    <option value="zeal">Zeal</option>
-                                    <option value="truth">Truth</option>
-                                    <option value="peace">Peace</option>
-                                </select>
-                                <input type="text" id="ev-name" placeholder="${localizedDict['ev_name_ph'][currentLang]}" style="flex:1; min-width:140px;">
-                                <input type="text" id="ev-loc" placeholder="${localizedDict['ev_loc_ph'][currentLang]}" style="width:120px;">
-                                <button class="btn-sm" onclick="addNewEvent()">${localizedDict['add_item_btn'][currentLang]}</button>
-                            </div>
-                        </div>` : ''}
-
                         <div class="card">
                             <div class="card-header"><span>${localizedDict['events_dir_title'][currentLang]}</span></div>
                             <table>
@@ -1331,142 +1379,91 @@
                         </div>
                     </div>`;
             } else if (activePage === 'page_teacher' && currentUser.role === 'teacher') {
-                // Teacher Panel: strict viewing only + management links/context
-                let tableHtml = `<tr><th>Email</th><th>Role</th><th>Class</th></tr>`;
-                registeredAccounts.forEach(acc => {
-                    tableHtml += `<tr>
-                        <td>${acc.email}</td>
-                        <td><span class="badge ${acc.role === 'teacher' ? 'badge-orange' : 'badge-green'}">${acc.role.toUpperCase()}</span></td>
-                        <td>${acc.className}</td>
-                    </tr>`;
+                // Teacher Portal Control Panel (Viewing announcements, new announcements, new event, new sip, new cca)
+                let annHtml = '';
+                announcementsList.forEach(a => {
+                    annHtml += `<p style="font-size:13px; margin-bottom:6px;">• <strong>[${a.grade.toUpperCase()} / ${a.class.toUpperCase()}]</strong> ${a.title}: ${a.content}</p>`;
                 });
 
                 contentArea.innerHTML = `
                     <div style="display:flex; flex-direction:column; gap:20px;">
                         <h1 style="font-size:26px;">${localizedDict['page_teacher'][currentLang]}</h1>
-                        <div class="card">
-                            <div class="card-header"><span>${localizedDict['teacher_panel_title'][currentLang]}</span></div>
-                            <p style="font-size:13px; color:var(--gray);">As a teacher, you can view existing user accounts, manage new announcements, create calendar events, issue SIP tasks, and manage CCA rosters from their respective tabs.</p>
-                        </div>
-                        <div class="card">
-                            <div class="card-header"><span>${localizedDict['teacher_view_accounts_title'][currentLang]}</span></div>
-                            <div style="max-height: 280px; overflow-y: auto;">
-                                <table>
-                                    ${tableHtml}
-                                </table>
-                            </div>
-                        </div>
-                    </div>`;
-            } else if (activePage === 'page_admin') {
-                // Admin Panel: Full control (create account, edit account, toggle MDM)
-                let adminTableHtml = `<tr><th>Email</th><th>Role</th><th>Class/Group</th><th>Password</th><th>Action</th></tr>`;
-                registeredAccounts.forEach((acc, idx) => {
-                    adminTableHtml += `<tr>
-                        <td>${acc.email}</td>
-                        <td><span class="badge ${acc.role === 'teacher' ? 'badge-orange' : 'badge-green'}">${acc.role.toUpperCase()}</span></td>
-                        <td>${acc.className}</td>
-                        <td>${acc.pass}</td>
-                        <td><button class="btn-sm" style="padding:4px 8px; font-size:11px;" onclick="adminEditAccount(${idx})">Edit</button></td>
-                    </tr>`;
-                });
-
-                contentArea.innerHTML = `
-                    <div style="display:flex; flex-direction:column; gap:20px;">
-                        <h1 style="font-size:26px;">${localizedDict['page_admin'][currentLang]}</h1>
-                        <div class="card">
-                            <div class="card-header"><span>${localizedDict['admin_ctrl_title'][currentLang]}</span></div>
-                            <button class="btn-sm" onclick="toggleMDMGlobal()">${localizedDict['admin_mdm_ctrl_title'][currentLang]} (${isMDMActive ? 'Active' : 'Disabled'})</button>
-                        </div>
                         
-                        <div class="card">
-                            <div class="card-header"><span>${localizedDict['admin_create_title'][currentLang]}</span></div>
+                        <div class="card" style="background: rgba(26,147,147,0.05); border: 1px dashed var(--accent-color);">
+                            <div class="card-header"><span>➕ ${localizedDict['teacher_publisher_title'][currentLang]}</span></div>
                             <div style="display:flex; flex-direction:column; gap:10px;">
-                                <input type="email" id="adm-new-email" placeholder="New Email (@binabangsaschool.com)">
-                                <input type="password" id="adm-new-pass" placeholder="Password (min 6 chars)">
-                                <div style="display:flex; gap:10px;">
-                                    <select id="adm-new-role">
-                                        <option value="student">Student</option>
-                                        <option value="teacher">Teacher</option>
+                                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                                    <select id="pub-target-type" style="width:140px;" onchange="togglePublisherFields(this.value)">
+                                        <option value="announcement">Announcement</option>
+                                        <option value="event">New Event</option>
+                                        <option value="sip">New SIP</option>
+                                        <option value="cca">New CCA</option>
                                     </select>
-                                    <input type="text" id="adm-new-class" placeholder="Class / Group (e.g. sec1-zeal)">
+                                    <select id="pub-grade" style="width:110px;">
+                                        <option value="All">${localizedDict['pub_all_grades'][currentLang]}</option>
+                                        <option value="sec1">SEC1</option>
+                                        <option value="sec2">SEC2</option>
+                                        <option value="sec3">SEC3</option>
+                                        <option value="sec4">SEC4</option>
+                                        <option value="jc1">JC1</option>
+                                    </select>
+                                    <select id="pub-class" style="width:110px;">
+                                        <option value="All">${localizedDict['pub_all_classes'][currentLang]}</option>
+                                        <option value="zeal">Zeal</option>
+                                        <option value="truth">Truth</option>
+                                        <option value="peace">Peace</option>
+                                        <option value="grace">Grace</option>
+                                        <option value="faith">Faith</option>
+                                    </select>
                                 </div>
-                                <button class="btn-sm" onclick="adminCreateAccount()">Create Account</button>
+                                <input type="text" id="pub-title" placeholder="${localizedDict['pub_title_placeholder'][currentLang]}">
+                                <div id="pub-location-box" class="hidden">
+                                    <input type="text" id="pub-location" placeholder="Location / Venue (e.g. School Stadium)">
+                                </div>
+                                <textarea id="pub-desc" placeholder="${localizedDict['pub_desc_placeholder'][currentLang]}" rows="2"></textarea>
+                                <button class="btn-sm" onclick="teacherPublishItem()">${localizedDict['pub_btn'][currentLang]}</button>
                             </div>
                         </div>
 
                         <div class="card">
-                            <div class="card-header"><span>${localizedDict['admin_edit_title'][currentLang]}</span></div>
-                            <table>
-                                ${adminTableHtml}
-                            </table>
+                            <div class="card-header"><span>👁️ Current Published Announcements & Activities View</span></div>
+                            <div style="max-height: 250px; overflow-y: auto;">
+                                ${annHtml}
+                            </div>
                         </div>
                     </div>`;
             }
         }
 
-        function adminCreateAccount() {
-            let email = document.getElementById('adm-new-email').value.toLowerCase().trim();
-            let pass = document.getElementById('adm-new-pass').value;
-            let role = document.getElementById('adm-new-role').value;
-            let className = document.getElementById('adm-new-class').value.trim() || 'General';
-
-            if(!email.endsWith('@binabangsaschool.com')) {
-                alert('Email must end with @binabangsaschool.com');
-                return;
-            }
-            if(pass.length < 6) {
-                alert('Password must be at least 6 characters.');
-                return;
-            }
-            if(registeredAccounts.some(a => a.email === email)) {
-                alert('An account with this email already exists.');
-                return;
-            }
-
-            registeredAccounts.push({ email, pass, role, className });
-            alert('Account successfully created by Admin!');
-            document.getElementById('adm-new-email').value = '';
-            document.getElementById('adm-new-pass').value = '';
-            document.getElementById('adm-new-class').value = '';
-            renderPage();
-        }
-
-        function adminEditAccount(idx) {
-            let acc = registeredAccounts[idx];
-            let newPass = prompt(`Enter new password for ${acc.email}:`, acc.pass);
-            if(newPass !== null) {
-                if(newPass.length < 6) {
-                    alert('Password must be at least 6 characters.');
-                    return;
-                }
-                acc.pass = newPass;
-                let newRole = prompt(`Enter role (student or teacher) for ${acc.email}:`, acc.role);
-                if(newRole === 'student' || newRole === 'teacher') {
-                    acc.role = newRole;
-                }
-                alert('Account updated successfully!');
-                renderPage();
+        function togglePublisherFields(type) {
+            let locBox = document.getElementById('pub-location-box');
+            if(type === 'event' || type === 'sip' || type === 'cca') {
+                locBox.classList.remove('hidden');
+            } else {
+                locBox.classList.add('hidden');
             }
         }
 
         function teacherPublishItem() {
-            let type = document.getElementById('pub-type').value;
+            let type = document.getElementById('pub-target-type').value;
             let grade = document.getElementById('pub-grade').value;
             let className = document.getElementById('pub-class').value;
             let title = document.getElementById('pub-title').value;
             let desc = document.getElementById('pub-desc').value;
+            let location = document.getElementById('pub-location') ? document.getElementById('pub-location').value : '';
 
             if(!title || !desc) { alert('Please fill in title and description.'); return; }
 
             if(type === 'announcement') {
                 announcementsList.unshift({ title: title, grade: grade, class: className, content: desc, date: "2026-06-06" });
-                alert('Announcement successfully published to target class & grade!');
+                alert('Announcement successfully published!');
             } else {
-                homeworkList.unshift({ subject: title, grade: grade, class: className, task: desc, due: "Next Class" });
-                alert('Homework successfully assigned to target class & grade!');
+                eventsList.unshift({ name: title, category: type.toUpperCase(), grade: grade, class: className, location: location || 'Campus', date: "2026-06-30", capacity: 40, registered: 0, status: "Open" });
+                alert(`New ${type.toUpperCase()} successfully created and published!`);
             }
             document.getElementById('pub-title').value = '';
             document.getElementById('pub-desc').value = '';
+            if(document.getElementById('pub-location')) document.getElementById('pub-location').value = '';
             renderPage();
         }
 
@@ -1561,18 +1558,6 @@
             if(!name || !time) { alert('Fill all fields'); return; }
             labBookings.push({ name: name, time: time, class: `${currentUser.grade.toUpperCase()}-${currentUser.className.toUpperCase()}`, teacher: currentUser.name, status: "Available" });
             alert('Laboratory slot added successfully!');
-            renderPage();
-        }
-
-        function addNewEvent() {
-            let cat = document.getElementById('ev-cat').value;
-            let grade = document.getElementById('ev-grade').value;
-            let className = document.getElementById('ev-class').value;
-            let name = document.getElementById('ev-name').value;
-            let loc = document.getElementById('ev-loc').value;
-            if(!name || !loc) { alert('Fill all event fields'); return; }
-            eventsList.push({ name: name, category: cat, grade: grade, class: className, location: loc, date: "2026-06-30", capacity: 40, registered: 0, status: "Open" });
-            alert(`${cat} successfully created and published to target class & grade!`);
             renderPage();
         }
 
