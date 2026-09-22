@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -450,6 +449,7 @@
             <div class="segmented-control" id="role-picker">
                 <button class="active" onclick="setRole('student')" id="role-student-btn">Student</button>
                 <button onclick="setRole('teacher')" id="role-teacher-btn">Teacher / Staff</button>
+                <button onclick="setRole('admin')" id="role-admin-btn">Admin Portal</button>
             </div>
 
             <div id="student-grade-class-box" style="display: flex; flex-direction: column; gap: 6px;">
@@ -521,16 +521,34 @@
     <div id="admin-modal-container" class="modal-overlay hidden">
         <div class="modal-card">
             <div class="card-header">
-                <span id="admin-modal-title">⚙️ Teacher Admin Hub (Account Registry View)</span>
+                <span id="admin-modal-title">⚙️ Master Admin Control Center</span>
                 <button class="btn-sm" onclick="closeAdminModal()" id="admin-close-btn">Close</button>
             </div>
             <div style="display: flex; flex-direction: column; gap: 18px;">
-                <p id="admin-desc-text" style="font-size: 13px; color: var(--gray);">As a teacher, you can view all registered portal user accounts below for administrative reference. Note: Teachers cannot create new accounts here.</p>
+                <p id="admin-desc-text" style="font-size: 13px; color: var(--gray);">Master Admin: Create accounts, edit credentials, or toggle global system MDM policies.</p>
+                
+                <div style="background: rgba(26,147,147,0.05); border: 1px dashed var(--accent-color); padding: 12px; border-radius: 8px;">
+                    <label style="font-size: 13px; font-weight: bold; display: block; margin-bottom: 8px;">➕ Create New System Account</label>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <input type="email" id="modal-new-email" placeholder="newuser@binabangsaschool.com">
+                        <input type="password" id="modal-new-pass" placeholder="Password (min 6 chars)">
+                        <div style="display: flex; gap: 8px;">
+                            <select id="modal-new-role">
+                                <option value="student">Student</option>
+                                <option value="teacher">Teacher / Staff</option>
+                                <option value="admin">Admin Portal</option>
+                            </select>
+                            <input type="text" id="modal-new-class" placeholder="Class/Group (e.g. SEC1-Zeal)">
+                        </div>
+                        <button class="btn-sm" onclick="adminCreateAccountFromModal()">Create Account in Registry</button>
+                    </div>
+                </div>
+
                 <div>
-                    <label id="admin-dir-label" style="font-size: 13px; font-weight: bold;">Registered Accounts Directory</label>
-                    <div style="max-height: 280px; overflow-y: auto; margin-top: 8px;">
+                    <label id="admin-dir-label" style="font-size: 13px; font-weight: bold;">Registered Accounts Directory (With Edit / Delete Controls)</label>
+                    <div style="max-height: 250px; overflow-y: auto; margin-top: 8px;">
                         <table id="admin-accounts-table">
-                            <tr><th>Email</th><th>Role</th><th>Class</th><th>Password</th></tr>
+                            <tr><th>Email</th><th>Role</th><th>Class</th><th>Password</th><th>Action</th></tr>
                         </table>
                     </div>
                 </div>
@@ -549,6 +567,7 @@
             "portal_subtitle": { english: "BBS Unified Student & Staff Portal", indonesia: "Portal Terpadu Siswa & Staf BBS", chinese: "培民学校学生与教职工统一门户" },
             "student": { english: "Student", indonesia: "Siswa", chinese: "学生" },
             "teacher": { english: "Teacher / Staff", indonesia: "Guru / Staf", chinese: "教师 / 职员" },
+            "admin": { english: "Admin Portal", indonesia: "Portal Admin", chinese: "管理门户" },
             "login_btn": { english: "LOG IN", indonesia: "MASUK", chinese: "登录" },
             "sign_out": { english: "Sign Out", indonesia: "Keluar", chinese: "退出登录" },
             "welcome": { english: "Welcome", indonesia: "Selamat Datang", chinese: "欢迎" },
@@ -562,7 +581,7 @@
             "page_events": { english: "Events & CCA/SIP", indonesia: "Acara, SIP & CCA", chinese: "活动与社团" },
             "page_trash": { english: "Trash Finder & Reports", indonesia: "Pembersihan Kebersihan", chinese: "校园清洁与举报" },
             "page_settings": { english: "App Settings", indonesia: "Pengaturan Aplikasi", chinese: "应用设置" },
-            "page_admin": { english: "Teacher Admin Hub", indonesia: "Pusat Admin Guru", chinese: "教师管理中心" },
+            "page_admin": { english: "Master Admin Control Center", indonesia: "Pusat Kontrol Admin Utama", chinese: "主管理控制中心" },
 
             // Dashboard Widgets & Elements
             "hw_title": { english: "Homework & Assignments", indonesia: "PR & Tugas", chinese: "家庭作业与任务" },
@@ -630,7 +649,7 @@
             "th_subject": { english: "Subject", indonesia: "Mata Pelajaran", chinese: "科目" },
 
             // Events Page
-            "events_teacher_title": { english: "Teacher Event / SIP / CCA Management (Targeted Class & Grade)", indonesia: "Manajemen Acara / SIP / Guru", chinese: "教师活动 / SIP / 社团管理" },
+            "events_teacher_title": { english: "Teacher Event / SIP / CCA Management (Targeted Class & Grade)", indonesia: "Manajemen Acara / SIP / CCA Guru", chinese: "教师活动 / SIP / 社团管理" },
             "ev_name_ph": { english: "Name / Title", indonesia: "Nama / Judul", chinese: "名称 / 标题" },
             "ev_loc_ph": { english: "Location", indonesia: "Lokasi", chinese: "地点" },
             "add_item_btn": { english: "Add Item", indonesia: "Tambah Item", chinese: "添加项目" },
@@ -669,15 +688,14 @@
 
             // Admin Page
             "admin_mdm_ctrl_title": { english: "MDM Campus Focus Control", indonesia: "Kontrol Fokus Kampus MDM", chinese: "MDM 校园专注控制" },
-            "admin_global_reg_title": { english: "Global Accounts Registry (View Only)", indonesia: "Registri Akun Global (Hanya Lihat)", chinese: "全局账号注册表（仅查看）" },
-            "admin_global_reg_desc": { english: "Teachers can view registered accounts here. Account creation is disabled for teachers.", indonesia: "Guru dapat melihat akun terdaftar di sini.", chinese: "教师可以在此处查看注册账号。" },
-            "admin_open_reg_btn": { english: "Open Account Registry View", indonesia: "Buka Tampilan Registri Akun", chinese: "打开账号注册表视图" },
+            "admin_global_reg_title": { english: "Master Account Registry & Management", indonesia: "Registri & Manajemen Akun Utama", chinese: "主账号注册与管理" },
+            "admin_global_reg_desc": { english: "Full admin privileges: create new user accounts, modify credentials, and control global policies.", indonesia: "Hak admin penuh: buat akun baru, ubah kredensial, dan atur kebijakan.", chinese: "完全管理员权限：创建新用户账号、修改凭证并控制全局策略。" },
 
             // Admin Modal
-            "admin_modal_heading": { english: "⚙️ Teacher Admin Hub (Account Registry View)", indonesia: "⚙️ Pusat Admin Guru (Tampilan Registri Akun)", chinese: "⚙️ 教师管理中心（账号注册表视图）" },
+            "admin_modal_heading": { english: "⚙️ Master Admin Control Center", indonesia: "⚙️ Pusat Kontrol Admin Utama", chinese: "⚙️ 主管理控制中心" },
             "admin_close_btn": { english: "Close", indonesia: "Tutup", chinese: "关闭" },
-            "admin_modal_desc": { english: "As a teacher, you can view all registered portal user accounts below for administrative reference. Note: Teachers cannot create new accounts here.", indonesia: "Sebagai guru, Anda dapat melihat semua akun pengguna portal yang terdaftar di bawah ini.", chinese: "作为教师，您可以在下方查看所有注册的门户用户账号以供行政参考。" },
-            "admin_dir_heading": { english: "Registered Accounts Directory", indonesia: "Direktori Akun Terdaftar", chinese: "注册账号目录" },
+            "admin_modal_desc": { english: "Master Admin: Create accounts, edit credentials, or toggle global system MDM policies.", indonesia: "Admin Utama: Buat akun, edit kredensial, atau alihkan kebijakan MDM.", chinese: "主管理员：创建账号、编辑凭证或切换全局系统 MDM 策略。" },
+            "admin_dir_heading": { english: "Registered Accounts Directory (With Edit / Delete Controls)", indonesia: "Direktori Akun Terdaftar (Dengan Kontrol Edit/Hapus)", chinese: "注册账号目录（带编辑/删除控制）" },
             "admin_mdm_heading": { english: "MDM Focus Policy Control", indonesia: "Kontrol Kebijakan Fokus MDM", chinese: "MDM 专注策略控制" },
             "admin_mdm_toggle_btn": { english: "Toggle Campus MDM Focus Mode", indonesia: "Alihkan Mode Fokus MDM Kampus", chinese: "切换校园 MDM 专注模式" }
         };
@@ -702,12 +720,14 @@
 
         let accountProfiles = {
             "student@binabangsaschool.com": { name: "STUDENT USER", primaryColor: "#0D2140", accentColor: "#1A9393" },
-            "teacher@binabangsaschool.com": { name: "TEACHER USER", primaryColor: "#1f3459", accentColor: "#344c80" }
+            "teacher@binabangsaschool.com": { name: "TEACHER USER", primaryColor: "#1f3459", accentColor: "#344c80" },
+            "admin@binabangsaschool.com": { name: "MASTER ADMIN", primaryColor: "#2b0d40", accentColor: "#931a93" }
         };
 
         let registeredAccounts = [
             { email: "student@binabangsaschool.com", pass: "123456", role: "student", className: "sec1-zeal" },
-            { email: "teacher@binabangsaschool.com", pass: "123456", role: "teacher", className: "Faculty Staff" }
+            { email: "teacher@binabangsaschool.com", pass: "123456", role: "teacher", className: "Faculty Staff" },
+            { email: "admin@binabangsaschool.com", pass: "123456", role: "admin", className: "System Admin" }
         ];
 
         let transactions = [
@@ -755,27 +775,33 @@
             currentRole = role;
             document.getElementById('role-student-btn').className = role === 'student' ? 'active' : '';
             document.getElementById('role-teacher-btn').className = role === 'teacher' ? 'active' : '';
+            document.getElementById('role-admin-btn').className = role === 'admin' ? 'active' : '';
             document.getElementById('student-grade-class-box').style.display = role === 'student' ? 'flex' : 'none';
-            document.getElementById('login-email').value = role === 'teacher' ? 'teacher@binabangsaschool.com' : 'student@binabangsaschool.com';
+            
+            if(role === 'teacher') {
+                document.getElementById('login-email').value = 'teacher@binabangsaschool.com';
+            } else if(role === 'admin') {
+                document.getElementById('login-email').value = 'admin@binabangsaschool.com';
+            } else {
+                document.getElementById('login-email').value = 'student@binabangsaschool.com';
+            }
         }
 
         function changeLanguage(lang) {
             currentLang = lang;
             
-            // Sync up select elements across UI if present
             let loginLangSel = document.getElementById('lang-select');
             if(loginLangSel) loginLangSel.value = lang;
 
-            // Translate static elements outside app
             document.getElementById('l-portal-title').innerText = localizedDict['portal_title'][lang];
             document.getElementById('l-portal-subtitle').innerText = localizedDict['portal_subtitle'][lang];
             document.getElementById('role-student-btn').innerText = localizedDict['student'][lang];
             document.getElementById('role-teacher-btn').innerText = localizedDict['teacher'][lang];
+            document.getElementById('role-admin-btn').innerText = localizedDict['admin'][lang];
             document.getElementById('l-select-grade-label').innerText = localizedDict['select_grade_label'][lang];
             document.getElementById('l-login-btn').innerText = localizedDict['login_btn'][lang];
             document.getElementById('l-sign-out').innerText = localizedDict['sign_out'][lang];
             
-            // Translate admin modal elements
             document.getElementById('admin-modal-title').innerText = localizedDict['admin_modal_heading'][lang];
             document.getElementById('admin-close-btn').innerText = localizedDict['admin_close_btn'][lang];
             document.getElementById('admin-desc-text').innerText = localizedDict['admin_modal_desc'][lang];
@@ -820,8 +846,8 @@
             if(!accountProfiles[email]) {
                 accountProfiles[email] = {
                     name: email.split('@')[0].replace('.', ' ').toUpperCase(),
-                    primaryColor: found.role === 'teacher' ? "#1f3459" : "#0D2140",
-                    accentColor: "#1A9393"
+                    primaryColor: found.role === 'admin' ? "#2b0d40" : (found.role === 'teacher' ? "#1f3459" : "#0D2140"),
+                    accentColor: found.role === 'admin' ? "#931a93" : "#1A9393"
                 };
             }
 
@@ -867,7 +893,7 @@
         }
 
         function triggerAdminSecret() {
-            let pass = prompt("Enter Admin Security Passcode:");
+            let pass = prompt("Enter Master Admin Security Passcode:");
             if(pass === "zane is the best yesyes and he supports cash to ash") {
                 renderAdminAccountsTable();
                 document.getElementById('admin-modal-container').classList.remove('hidden');
@@ -881,16 +907,70 @@
         }
 
         function renderAdminAccountsTable() {
-            let html = `<tr><th>Email</th><th>Role</th><th>Class/Group</th><th>Password</th></tr>`;
-            registeredAccounts.forEach(acc => {
+            let html = `<tr><th>Email</th><th>Role</th><th>Class/Group</th><th>Password</th><th>Action</th></tr>`;
+            registeredAccounts.forEach((acc, idx) => {
                 html += `<tr>
                     <td>${acc.email}</td>
-                    <td><span class="badge ${acc.role === 'teacher' ? 'badge-orange' : 'badge-green'}">${acc.role.toUpperCase()}</span></td>
+                    <td><span class="badge ${acc.role === 'admin' ? 'badge-orange' : (acc.role === 'teacher' ? 'badge-orange' : 'badge-green')}">${acc.role.toUpperCase()}</span></td>
                     <td>${acc.className}</td>
                     <td>${acc.pass}</td>
+                    <td>
+                        <button class="btn-sm" style="padding:4px 8px; font-size:11px;" onclick="editAccountPrompt(${idx})">Edit</button>
+                        <button class="btn-sm" style="padding:4px 8px; font-size:11px; background:var(--red);" onclick="deleteAccount(${idx})">Del</button>
+                    </td>
                 </tr>`;
             });
             document.getElementById('admin-accounts-table').innerHTML = html;
+        }
+
+        function adminCreateAccountFromModal() {
+            let email = document.getElementById('modal-new-email').value.toLowerCase().trim();
+            let pass = document.getElementById('modal-new-pass').value;
+            let role = document.getElementById('modal-new-role').value;
+            let className = document.getElementById('modal-new-class').value || 'Default';
+
+            if(!email.endsWith('@binabangsaschool.com')) { alert('Email must end with @binabangsaschool.com'); return; }
+            if(pass.length < 6) { alert('Password must be at least 6 characters'); return; }
+
+            if(registeredAccounts.some(a => a.email === email)) {
+                alert('Account with this email already exists!');
+                return;
+            }
+
+            registeredAccounts.push({ email: email, pass: pass, role: role, className: className });
+            accountProfiles[email] = {
+                name: email.split('@')[0].replace('.', ' ').toUpperCase(),
+                primaryColor: role === 'admin' ? "#2b0d40" : (role === 'teacher' ? "#1f3459" : "#0D2140"),
+                accentColor: role === 'admin' ? "#931a93" : "#1A9393"
+            };
+
+            document.getElementById('modal-new-email').value = '';
+            document.getElementById('modal-new-pass').value = '';
+            document.getElementById('modal-new-class').value = '';
+
+            renderAdminAccountsTable();
+            alert('Account successfully created and added to registry!');
+        }
+
+        function editAccountPrompt(idx) {
+            let acc = registeredAccounts[idx];
+            let newPass = prompt(`Edit password for ${acc.email}:`, acc.pass);
+            if(newPass !== null) {
+                if(newPass.length < 6) { alert('Password must be at least 6 characters.'); return; }
+                acc.pass = newPass;
+                renderAdminAccountsTable();
+                alert('Account credentials updated successfully!');
+            }
+        }
+
+        function deleteAccount(idx) {
+            let acc = registeredAccounts[idx];
+            if(acc.email === currentUser.email) { alert('Cannot delete your currently logged-in admin account.'); return; }
+            if(confirm(`Are you sure you want to delete ${acc.email}?`)) {
+                registeredAccounts.splice(idx, 1);
+                renderAdminAccountsTable();
+                alert('Account deleted from registry.');
+            }
         }
 
         function toggleMDMGlobal() {
@@ -916,8 +996,13 @@
         function renderSidebar() {
             document.getElementById('sidebar-avatar-text').innerText = currentUser.name.charAt(0);
             document.getElementById('sidebar-username').innerText = currentUser.name;
-            document.getElementById('sidebar-role-label').innerText = localizedDict[currentUser.role === 'teacher' ? 'teacher' : 'student'][currentLang];
-            document.getElementById('sidebar-class-label').innerText = currentUser.role === 'student' ? `${currentUser.grade.toUpperCase()} - ${currentUser.className.toUpperCase()}` : 'Faculty Staff';
+            
+            let roleDisplayName = localizedDict['student'][currentLang];
+            if(currentUser.role === 'teacher') roleDisplayName = localizedDict['teacher'][currentLang];
+            if(currentUser.role === 'admin') roleDisplayName = localizedDict['admin'][currentLang];
+            document.getElementById('sidebar-role-label').innerText = roleDisplayName;
+
+            document.getElementById('sidebar-class-label').innerText = currentUser.role === 'student' ? `${currentUser.grade.toUpperCase()} - ${currentUser.className.toUpperCase()}` : 'Faculty & Management';
 
             let navHtml = '';
             pagesList.forEach(p => {
@@ -928,9 +1013,9 @@
                 </div>`;
             });
 
-            if(currentUser.role === 'teacher') {
+            if(currentUser.role === 'admin') {
                 navHtml += `<div class="nav-item ${activePage === 'page_admin' ? 'active' : ''}" onclick="switchPage('page_admin')">
-                    <span>👨‍🏫</span>
+                    <span>👑</span>
                     <span>${localizedDict['page_admin'][currentLang]}</span>
                 </div>`;
             }
@@ -964,7 +1049,7 @@
             
             if (activePage === 'page_home') {
                 let filteredAnnouncements = announcementsList.filter(a => (a.grade === 'All' || a.grade === currentUser.grade) && (a.class === 'All' || a.class === currentUser.className));
-                let filteredHomework = homeworkList.filter(h => currentUser.role === 'teacher' || (h.grade === currentUser.grade && h.class === currentUser.className));
+                let filteredHomework = homeworkList.filter(h => currentUser.role !== 'student' || (h.grade === currentUser.grade && h.class === currentUser.className));
 
                 let annHtml = '';
                 filteredAnnouncements.forEach(a => {
@@ -1043,13 +1128,15 @@
                     txHtml += `<tr><td>${t.date}</td><td>${t.title}</td><td>${t.category}</td><td style="color: ${t.amount > 0 ? 'var(--green)' : 'var(--red)'};">${t.amount > 0 ? '+' : ''}Rp ${t.amount.toLocaleString()}</td></tr>`;
                 });
 
+                let isStaffOrAdmin = currentUser.role === 'teacher' || currentUser.role === 'admin';
+
                 contentArea.innerHTML = `
                     <div style="display:flex; flex-direction:column; gap:20px;">
                         <h1 style="font-size:26px;">${localizedDict['page_ovo'][currentLang]}</h1>
-                        <div class="ovo-card ${currentUser.role === 'teacher' ? 'teacher-card' : ''}">
+                        <div class="ovo-card ${isStaffOrAdmin ? 'teacher-card' : ''}">
                             <div style="display:flex; justify-content:space-between; align-items:center;">
                                 <span style="font-size:20px; font-weight:bold; font-style:italic;">${localizedDict['ovo_card_header'][currentLang]}</span>
-                                <span class="badge ${currentUser.role === 'teacher' ? 'badge-orange' : 'badge-green'}">${currentUser.role === 'teacher' ? localizedDict['ovo_teacher_badge'][currentLang] : localizedDict['ovo_student_badge'][currentLang]}</span>
+                                <span class="badge ${isStaffOrAdmin ? 'badge-orange' : 'badge-green'}">${isStaffOrAdmin ? localizedDict['ovo_teacher_badge'][currentLang] : localizedDict['ovo_student_badge'][currentLang]}</span>
                             </div>
                             <div>
                                 <div style="font-size:12px; opacity:0.8;">${localizedDict['ovo_available_balance'][currentLang]}</div>
@@ -1061,7 +1148,7 @@
                             </div>
                         </div>
 
-                        ${currentUser.role === 'teacher' ? `
+                        ${isStaffOrAdmin ? `
                         <div class="card">
                             <div class="card-header"><span>${localizedDict['faculty_allowance_title'][currentLang]} (Rp${facultyAllowance.toLocaleString()})</span></div>
                             <div style="display:flex; gap:10px;">
@@ -1101,11 +1188,13 @@
                     labHtml += `<tr><td>${l.name}</td><td>${l.time}</td><td>${l.class}</td><td>${l.teacher}</td><td><span class="badge ${l.status === 'Available' ? 'badge-green' : 'badge-red'}">${l.status}</span></td></tr>`;
                 });
 
+                let canBookLab = currentUser.role === 'teacher' || currentUser.role === 'admin';
+
                 contentArea.innerHTML = `
                     <div style="display:flex; flex-direction:column; gap:20px;">
                         <h1 style="font-size:26px;">${localizedDict['page_lab'][currentLang]}</h1>
                         
-                        ${currentUser.role === 'teacher' ? `
+                        ${canBookLab ? `
                         <div class="card">
                             <div class="card-header"><span>${localizedDict['lab_control_title'][currentLang]}</span></div>
                             <div style="display:flex; gap:10px; flex-wrap:wrap;">
@@ -1169,11 +1258,13 @@
                     schedHtml += `<tr><td>${s.time}</td><td>${s.subject}</td><td><span class="badge ${s.status === 'PRESENT' ? 'badge-green' : 'badge-red'}">${s.status}</span></td></tr>`;
                 });
 
+                let isStaffOrAdminAtt = currentUser.role === 'teacher' || currentUser.role === 'admin';
+
                 contentArea.innerHTML = `
                     <div style="display:flex; flex-direction:column; gap:20px;">
                         <h1 style="font-size:26px;">${localizedDict['page_attendance'][currentLang]}</h1>
                         
-                        ${currentUser.role === 'teacher' ? `
+                        ${isStaffOrAdminAtt ? `
                         <div class="card">
                             <div class="card-header"><span>${localizedDict['att_gen_title'][currentLang]}</span></div>
                             <p style="font-size:13px; color:var(--gray);">${localizedDict['att_gen_desc'][currentLang]}</p>
@@ -1220,11 +1311,13 @@
                     evHtml += `<tr><td><strong>[${e.category}]</strong> ${e.name}</td><td>${e.grade.toUpperCase()} - ${e.class.toUpperCase()}</td><td>${e.location}</td><td>${e.date}</td><td>${e.registered}/${e.capacity}</td><td><button class="btn-sm" onclick="registerEvent('${e.name}')">${e.status}</button></td></tr>`;
                 });
 
+                let canManageEvents = currentUser.role === 'teacher' || currentUser.role === 'admin';
+
                 contentArea.innerHTML = `
                     <div style="display:flex; flex-direction:column; gap:20px;">
                         <h1 style="font-size:26px;">${localizedDict['page_events'][currentLang]}</h1>
                         
-                        ${currentUser.role === 'teacher' ? `
+                        ${canManageEvents ? `
                         <div class="card">
                             <div class="card-header"><span>${localizedDict['events_teacher_title'][currentLang]}</span></div>
                             <div style="display:flex; gap:10px; flex-wrap:wrap;">
@@ -1263,7 +1356,8 @@
             } else if (activePage === 'page_trash') {
                 let trHtml = '';
                 trashReports.forEach(t => {
-                    trHtml += `<tr><td>${t.details}</td><td>${t.offender}</td><td><span class="badge badge-orange">${t.status}</span></td><td>${currentUser.role === 'teacher' ? '<button class="btn-sm" onclick="resolveTrash()">Resolve</button>' : ''}</td></tr>`;
+                    let canResolve = currentUser.role === 'teacher' || currentUser.role === 'admin';
+                    trHtml += `<tr><td>${t.details}</td><td>${t.offender}</td><td><span class="badge badge-orange">${t.status}</span></td><td>${canResolve ? '<button class="btn-sm" onclick="resolveTrash()">Resolve</button>' : ''}</td></tr>`;
                 });
 
                 contentArea.innerHTML = `
@@ -1332,7 +1426,7 @@
                             <p style="font-size:13px; margin-top:6px;">${localizedDict['class_group_label'][currentLang]}: <strong>${currentUser.grade.toUpperCase()} - ${currentUser.className.toUpperCase()}</strong></p>
                         </div>
                     </div>`;
-            } else if (activePage === 'page_admin' && currentUser.role === 'teacher') {
+            } else if (activePage === 'page_admin' && currentUser.role === 'admin') {
                 contentArea.innerHTML = `
                     <div style="display:flex; flex-direction:column; gap:20px;">
                         <h1 style="font-size:26px;">${localizedDict['page_admin'][currentLang]}</h1>
@@ -1343,7 +1437,7 @@
                         <div class="card">
                             <div class="card-header"><span>${localizedDict['admin_global_reg_title'][currentLang]}</span></div>
                             <p style="font-size:13px; color:var(--gray);">${localizedDict['admin_global_reg_desc'][currentLang]}</p>
-                            <button class="btn-sm" onclick="renderAdminAccountsTable(); document.getElementById('admin-modal-container').classList.remove('hidden');">${localizedDict['admin_open_reg_btn'][currentLang]}</button>
+                            <button class="btn-sm" onclick="renderAdminAccountsTable(); document.getElementById('admin-modal-container').classList.remove('hidden');">Open Master Admin Console</button>
                         </div>
                     </div>`;
             }
