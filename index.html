@@ -1,6 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+
+const SUPABASE_URL = "https://wtwmsqkospxtkfwdbwhv.supabase.co";
+
+const SUPABASE_ANON_KEY = "sb_publishable_tfiVDEM0snGbS45LZFWnYg_C0lhBkoY";
+
+const supabaseClient = supabase.createClient(
+
+    SUPABASE_URL,
+
+    SUPABASE_ANON_KEY
+
+);
+async function testSupabase() {
+    const { data, error } = await supabaseClient
+        .from("announcements")
+        .select("*");
+
+    if (error) {
+        console.error("Supabase error:", error);
+    } else {
+        console.log("Supabase connected!", data);
+    }
+}
+
+testSupabase();
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Binary Portability Premium+ v.web</title>
@@ -429,6 +457,7 @@
         }
     </style>
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    
 </head>
 <body>
 
